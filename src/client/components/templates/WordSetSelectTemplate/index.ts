@@ -1,0 +1,1 @@
+export { WordSetSelectTemplate } from './WordSetSelectTemplate';

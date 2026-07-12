@@ -1,0 +1,586 @@
+.container {
+  min-height: 100dvh;
+  background: var(--bg-gradient);
+  color: var(--ink-700);
+  padding: calc(24px + env(safe-area-inset-top, 0px)) 24px calc(24px + env(safe-area-inset-bottom, 0px)) 24px;
+  max-width: 640px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 800;
+  margin: 0;
+  color: var(--ink-900);
+}
+
+.studyLink, .backLink {
+  font-size: 14px;
+  color: var(--ink-400);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.studyLink:hover, .backLink:hover {
+  color: var(--ink-900);
+}
+
+/* Auth / Login Page */
+.authContainer {
+  min-height: 100dvh;
+  background: var(--bg-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.authCard {
+  width: 100%;
+  max-width: 400px;
+  background: var(--surface);
+  border: 1px solid rgba(255, 111, 165, 0.18);
+  border-radius: var(--radius-card);
+  padding: 40px 24px;
+  box-sizing: border-box;
+  text-align: center;
+  box-shadow: var(--shadow-pop);
+}
+
+.authTitle {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 24px 0;
+  color: var(--ink-900);
+  line-height: 1.4;
+}
+
+.authError {
+  color: #E5484D;
+  font-size: 13px;
+  margin: 0 0 20px 0;
+  background: rgba(229, 72, 77, 0.08);
+  padding: 8px 12px;
+  border-radius: var(--radius-btn);
+  border: 1px solid rgba(229, 72, 77, 0.15);
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.formGroup label {
+  font-size: 12px;
+  color: var(--ink-400);
+  font-weight: 600;
+}
+
+.input {
+  width: 100%;
+  height: 44px;
+  background: var(--surface-tint);
+  border: 1px solid rgba(255, 111, 165, 0.18);
+  border-radius: 10px;
+  color: var(--ink-900);
+  padding: 0 16px;
+  box-sizing: border-box;
+  font-size: 15px;
+  transition: all 0.2s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--berry-500);
+  background: var(--surface);
+}
+
+.loginButton, .saveButton, .updateButton {
+  width: 100%;
+  min-height: 48px;
+  background: var(--berry-500);
+  border: none;
+  border-radius: var(--radius-btn);
+  color: #FFFFFF;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-soft);
+}
+
+.loginButton:hover, .saveButton:hover, .updateButton:hover {
+  background: var(--berry-600);
+}
+
+/* Add Word Section */
+.addSection {
+  margin-bottom: 40px;
+  width: 100%;
+}
+
+.toggleFormButton {
+  width: 100%;
+  min-height: 48px;
+  background: var(--surface);
+  border: 1px dashed rgba(255, 111, 165, 0.35);
+  border-radius: var(--radius-btn);
+  color: var(--ink-700);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggleFormButton:hover {
+  background: var(--berry-100);
+  border-color: var(--berry-400);
+}
+
+.addForm {
+  background: var(--surface-tint);
+  border: 1px solid rgba(255, 111, 165, 0.18);
+  border-radius: 20px;
+  padding: 24px;
+  margin-top: 16px;
+  box-sizing: border-box;
+  animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.addForm h3 {
+  font-size: 16px;
+  margin: 0 0 20px 0;
+  font-weight: 700;
+  color: var(--ink-900);
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.error {
+  color: #E5484D;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+/* Words List */
+.listSection {
+  width: 100%;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink-400);
+  margin: 0 0 16px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.wordList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wordRow {
+  background: var(--surface);
+  border: 1px solid rgba(255, 111, 165, 0.18);
+  border-radius: var(--radius-btn);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.wordInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.wordEnglish {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink-900);
+}
+
+.wordTranslations {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink-400);
+}
+
+.wordTranslationDivider {
+  color: rgba(255, 111, 165, 0.30);
+}
+
+.rowActions {
+  display: flex;
+  gap: 8px;
+}
+
+.actionIconButton {
+  width: 44px;
+  height: 44px;
+  background: var(--surface-tint);
+  border: 1px solid rgba(255, 111, 165, 0.18);
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  transition: all 0.2s ease;
+}
+
+.actionIconButton:hover {
+  background: var(--berry-100);
+  border-color: var(--berry-400);
+}
+
+/* Edit Form Row */
+.editRow {
+  background: var(--surface-tint);
+  border: 1px solid rgba(255, 111, 165, 0.18);
+  border-radius: 20px;
+  padding: 24px;
+}
+
+.editForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.editForm h4 {
+  font-size: 15px;
+  margin: 0 0 8px 0;
+  font-weight: 700;
+  color: var(--ink-900);
+}
+
+.editFormButtons {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.updateButton {
+  flex: 1;
+  min-height: 44px;
+  margin-bottom: 0;
+}
+
+.cancelButton {
+  flex: 1;
+  min-height: 44px;
+  background: transparent;
+  border: 1px solid rgba(255, 111, 165, 0.18);
+  border-radius: var(--radius-btn);
+  color: var(--ink-700);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+
+.cancelButton:hover {
+  background: var(--berry-100);
+  border-color: var(--berry-400);
+}
+
+/* Status Loading */
+.status {
+  text-align: center;
+  padding: 32px;
+  color: var(--ink-400);
+  font-size: 14px;
+}
+
+/* Modal Dialog */
+.dialog {
+  position: fixed;
+  inset: 0;
+  background: rgba(74, 44, 58, 0.45);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+.dialogBox {
+  background: var(--surface);
+  border: 1px solid rgba(255, 111, 165, 0.18);
+  padding: 32px 24px;
+  border-radius: var(--radius-card);
+  max-width: 360px;
+  width: 90%;
+  box-sizing: border-box;
+  text-align: center;
+  box-shadow: var(--shadow-pop);
+}
+
+.dialogText {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-700);
+  margin: 0 0 24px 0;
+}
+
+.dialogButtons {
+  display: flex;
+  gap: 12px;
+}
+
+.confirmDeleteButton {
+  flex: 1;
+  min-height: 44px;
+  background: #E5484D;
+  border: none;
+  border-radius: var(--radius-btn);
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.confirmDeleteButton:hover {
+  filter: brightness(1.08);
+}
+
+.dialogCancelButton {
+  flex: 1;
+  min-height: 44px;
+  background: var(--surface-tint);
+  border: 1px solid rgba(255, 111, 165, 0.18);
+  border-radius: var(--radius-btn);
+  color: var(--ink-700);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dialogCancelButton:hover {
+  background: var(--berry-100);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Custom Select Dropdown Styling */
+.select {
+  width: 100%;
+  height: 44px;
+  background: var(--surface-tint);
+  border: 1px solid rgba(255, 111, 165, 0.18);
+  border-radius: 10px;
+  color: var(--ink-900);
+  padding: 0 16px;
+  box-sizing: border-box;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--berry-500);
+  background: var(--surface);
+  box-shadow: 0 0 0 3px rgba(255, 111, 165, 0.15);
+}
+
+/* Level Badges */
+.levelBadge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-left: 8px;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  letter-spacing: 0.5px;
+}
+
+.badgeBasic {
+  background: rgba(46, 160, 67, 0.12);
+  color: #2ea043;
+  border: 1px solid rgba(46, 160, 67, 0.2);
+}
+
+.badgeIntermediate {
+  background: rgba(56, 139, 253, 0.12);
+  color: #388bfd;
+  border: 1px solid rgba(56, 139, 253, 0.2);
+}
+
+.badgeAdvanced {
+  background: rgba(187, 128, 255, 0.12);
+  color: #bb80ff;
+  border: 1px solid rgba(187, 128, 255, 0.2);
+}
+
+.badgeUnknown {
+  background: rgba(139, 148, 158, 0.12);
+  color: #8b949e;
+  border: 1px solid rgba(139, 148, 158, 0.2);
+}
+
+/* Filter Section */
+.listHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+  border-bottom: 1px solid rgba(255, 111, 165, 0.1);
+  padding-bottom: 12px;
+}
+
+.filterGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filterGroup label {
+  font-size: 13px;
+  color: var(--ink-400);
+  font-weight: 600;
+}
+
+.filterSelect {
+  height: 38px;
+  background: var(--surface);
+  border: 1px solid rgba(255, 111, 165, 0.2);
+  border-radius: 8px;
+  color: var(--ink-900);
+  padding: 0 12px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 160px;
+}
+
+.filterSelect:focus {
+  outline: none;
+  border-color: var(--berry-500);
+  box-shadow: 0 0 0 2px rgba(255, 111, 165, 0.1);
+}
+
+/* Responsive Overrides (Prevent Overflow & Enhance Layout) */
+@media (max-width: 580px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .wordRow {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px;
+    gap: 14px;
+  }
+
+  .wordHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .levelBadge {
+    margin-left: 0;
+  }
+
+  .wordInfo {
+    width: 100%;
+  }
+
+  .rowActions {
+    width: 100%;
+    justify-content: flex-end;
+    border-top: 1px solid rgba(255, 111, 165, 0.08);
+    padding-top: 10px;
+  }
+
+  .listHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .filterGroup {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .filterSelect {
+    flex-grow: 1;
+  }
+
+  .editFormButtons {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+
+  .cancelButton, .updateButton {
+    width: 100%;
+    margin-bottom: 0;
+  }
+}
+

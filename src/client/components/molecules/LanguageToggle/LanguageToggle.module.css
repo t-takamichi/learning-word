@@ -1,0 +1,39 @@
+.container {
+  display: inline-flex;
+  background-color: var(--surface-tint);
+  border-radius: var(--radius-pill);
+  padding: 4px;
+  box-shadow: var(--shadow-press);
+}
+
+.toggleButton {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+}
+
+.toggleButton:disabled {
+  cursor: default;
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  transition: transform 0.1s ease;
+}
+
+.toggleButton:active:not(:disabled) .chip {
+  transform: translateY(1px);
+}
+
+.flag {
+  font-size: 1.1rem;
+}
+
+.label {
+  font-size: 0.8125rem;
+}

@@ -1,0 +1,1 @@
+export { AutoPlayControls } from './AutoPlayControls';

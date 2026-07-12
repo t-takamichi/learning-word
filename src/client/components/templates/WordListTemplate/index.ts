@@ -1,0 +1,1 @@
+export { WordListTemplate } from './WordListTemplate';

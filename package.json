@@ -1,0 +1,35 @@
+{
+  "name": "learning-word",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@hono/node-server": "^1",
+    "@tanstack/react-query": "^5",
+    "hono": "^4",
+    "react": "^18",
+    "react-dom": "^18",
+    "zo": "^0.0.2",
+    "zod": "^3"
+  },
+  "devDependencies": {
+    "@hono/zod-validator": "^0.4",
+    "@types/node": "^22",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@vitejs/plugin-react": "^4",
+    "concurrently": "^9",
+    "tsx": "^4",
+    "typescript": "^5",
+    "vite": "^5"
+  },
+  "scripts": {
+    "dev": "concurrently \"yarn server\" \"vite\"",
+    "server": "tsx watch src/server/index.ts",
+    "build": "vite build",
+    "start": "tsx src/server/index.ts",
+    "typecheck": "tsc --noEmit",
+    "setup:piper": "bash scripts/setup-piper.sh",
+    "db:reset": "npx tsx scripts/reset-db.ts"
+  }
+}

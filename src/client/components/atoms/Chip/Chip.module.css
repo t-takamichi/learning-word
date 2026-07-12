@@ -1,0 +1,26 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  padding: 4px 12px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.berry {
+  background-color: var(--berry-100);
+  color: var(--ink-900);
+}
+
+.mint {
+  background-color: var(--mint-100);
+  color: var(--mint-500);
+}
+
+.lavender {
+  background-color: color-mix(in srgb, var(--lavender-500) 15%, transparent);
+  color: var(--lavender-500);
+}

@@ -1,0 +1,444 @@
+.container {
+  min-height: 100dvh;
+  background: var(--bg-gradient);
+  color: var(--ink-700);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.centered {
+  min-height: 100dvh;
+  background: var(--bg-gradient);
+  color: var(--ink-700);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.loader {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 111, 165, 0.18);
+  border-radius: 50%;
+  border-top-color: var(--berry-500);
+  animation: spin 1s ease-in-out infinite;
+}
+
+.loadingText {
+  font-size: 14px;
+  color: var(--ink-400);
+}
+
+.errorText {
+  color: #E5484D;
+  line-height: 1.6;
+}
+
+.emptyText {
+  color: var(--ink-400);
+  line-height: 1.6;
+}
+
+.header {
+  padding: 24px 24px 12px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.progressContainer {
+  width: 100%;
+  max-width: 448px;
+  margin: 0 auto;
+}
+
+.progressText {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--ink-400);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.progressCount {
+  font-weight: 700;
+  color: var(--ink-900);
+  background: var(--berry-100);
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+}
+
+.progressBar {
+  width: 100%;
+  height: 4px;
+  background: var(--berry-100);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--berry-500) 0%, var(--sunny-400) 100%);
+  border-radius: 2px;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  padding: 12px 24px 48px 24px;
+}
+
+/* Auto-Play Styles */
+.autoPlayControls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: var(--surface-tint);
+  border: 1px solid rgba(255, 111, 165, 0.18);
+  padding: 6px 16px;
+  border-radius: var(--radius-pill);
+  max-width: 448px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.autoPlayButton {
+  min-height: 36px;
+  background: var(--berry-100);
+  border: 1px solid rgba(255, 111, 165, 0.18);
+  border-radius: var(--radius-pill);
+  color: var(--ink-700);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.autoPlayButton:hover {
+  background: var(--berry-100);
+  color: var(--ink-900);
+}
+
+.autoPlayActive {
+  background: var(--berry-500);
+  color: #FFFFFF;
+  border-color: var(--berry-500);
+  box-shadow: var(--shadow-press);
+}
+
+.autoPlayActive:hover {
+  background: var(--berry-600);
+  color: #FFFFFF;
+}
+
+.delaySettings {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.delayLabel {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--ink-400);
+  font-weight: 500;
+}
+
+.delayInput {
+  width: 38px;
+  height: 24px;
+  background: var(--surface-tint);
+  border: 1px solid rgba(255, 111, 165, 0.18);
+  border-radius: 6px;
+  color: var(--ink-900);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.delayInput:focus {
+  outline: none;
+  border-color: var(--berry-500);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---- List Mode Layout ---- */
+.listModeContainer {
+  min-height: 100dvh;
+  background: var(--bg-gradient);
+  color: var(--ink-700);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding-bottom: 80px; /* footer button spacing */
+}
+
+.header {
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 111, 165, 0.08);
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.backButton {
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--berry-500);
+  font-weight: bold;
+  padding: 4px 8px;
+}
+
+.titleText {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--ink-900);
+  font-weight: 800;
+}
+
+/* ---- Simple Card ---- */
+.topSimpleCard {
+  padding: 16px 24px;
+}
+
+.topCardInner {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.topCardTag {
+  font-size: 0.75rem;
+  color: var(--ink-400);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.topWordTitle {
+  font-size: 2rem;
+  color: var(--ink-900);
+  font-weight: 900;
+  margin: 8px 0;
+}
+
+.topSpeakBtn {
+  margin-top: 4px;
+}
+
+.speechIconButton {
+  background: var(--berry-100);
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.speechIconButton:active {
+  transform: scale(0.9);
+}
+
+/* ---- Toggle and Controls ---- */
+.listControls {
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--surface-subtle);
+  border-top: 1px solid rgba(255, 111, 165, 0.04);
+  border-bottom: 1px solid rgba(255, 111, 165, 0.04);
+}
+
+.toggleWrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.toggleLabel {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ink-800);
+}
+
+.controlIcons {
+  display: flex;
+  gap: 8px;
+}
+
+.iconButton {
+  background: var(--surface);
+  border: 1px solid var(--ink-200);
+  border-radius: 6px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--ink-700);
+}
+
+/* Toggle Switch Slider Styling */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--ink-200);
+  transition: .2s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .2s;
+}
+
+input:checked + .slider {
+  background-color: var(--berry-500);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px var(--berry-500);
+}
+
+input:checked + .slider:before {
+  transform: translateX(22px);
+}
+
+.slider.round {
+  border-radius: 24px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/* ---- Scroll Container ---- */
+.wordListScrollContainer {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 24px max(96px, env(safe-area-inset-bottom) + 80px) 24px;
+}
+
+/* ---- Sticky Footer with Blue Button ---- */
+.fixedFooter {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border-top: 1px solid rgba(255, 111, 165, 0.08);
+  padding: 12px 24px max(12px, env(safe-area-inset-bottom)) 24px;
+  display: flex;
+  justify-content: center;
+  z-index: 100;
+}
+
+.luyenTapButton {
+  background-color: #2563EB; /* Bright Blue */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 12px 24px;
+  width: 100%;
+  max-width: 400px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.luyenTapButton:hover {
+  background-color: #1D4ED8;
+}
+
+.luyenTapButton:active {
+  transform: scale(0.98);
+}
+
+/* Study mode back button */
+.backToOverviewBtn {
+  background: var(--surface-subtle);
+  border: 1px solid var(--ink-200);
+  border-radius: var(--radius-btn);
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: var(--ink-700);
+  transition: all 0.15s ease;
+}
+
+.backToOverviewBtn:hover {
+  background: var(--berry-100);
+  color: var(--berry-600);
+  border-color: var(--berry-300);
+}

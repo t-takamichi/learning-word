@@ -1,0 +1,913 @@
+import { writeFileSync, mkdirSync } from 'node:fs';
+import { dirname } from 'node:path';
+
+type DictionaryWord = {
+  english: string;
+  vietnamese: string;
+  japanese: string;
+  example_en: string;
+  example_vi: string;
+  example_ja: string;
+};
+
+const words: DictionaryWord[] = [
+  // A
+  {
+    english: "ability",
+    vietnamese: "khả năng",
+    japanese: "能力",
+    example_en: "She has the ability to solve complex problems.",
+    example_vi: "Cô ấy có khả năng giải quyết các vấn đề phức tạp.",
+    example_ja: "彼女には複雑な問題を解決する能力がある。"
+  },
+  {
+    english: "accept",
+    vietnamese: "chấp nhận",
+    japanese: "受け入れる",
+    example_en: "I accept your apology.",
+    example_vi: "Tôi chấp nhận lời xin lỗi của bạn.",
+    example_ja: "あなたの謝罪を受け入れます。"
+  },
+  {
+    english: "achieve",
+    vietnamese: "đạt được",
+    japanese: "達成する",
+    example_en: "You can achieve anything with hard work.",
+    example_vi: "Bạn có thể đạt được bất kỳ điều gì bằng cách chăm chỉ.",
+    example_ja: "一生懸命努力すれば、何でも達成できる。"
+  },
+  {
+    english: "action",
+    vietnamese: "hành động",
+    japanese: "行動",
+    example_en: "Actions speak louder than words.",
+    example_vi: "Hành động có ý nghĩa hơn lời nói.",
+    example_ja: "行動は言葉よりも雄弁である。"
+  },
+  {
+    english: "activity",
+    vietnamese: "hoạt động",
+    japanese: "活動",
+    example_en: "Physical activity is good for your health.",
+    example_vi: "Hoạt động thể chất rất tốt cho sức khỏe của bạn.",
+    example_ja: "身体活動は健康に良い。"
+  },
+  {
+    english: "admit",
+    vietnamese: "thừa nhận",
+    japanese: "認める",
+    example_en: "He admitted that he made a mistake.",
+    example_vi: "Anh ấy thừa nhận rằng mình đã mắc sai lầm.",
+    example_ja: "彼は自分が間違いを犯したことを認めた。"
+  },
+  {
+    english: "advantage",
+    vietnamese: "lợi thế",
+    japanese: "利点",
+    example_en: "Knowing English is a big advantage.",
+    example_vi: "Biết tiếng Anh là một lợi thế lớn.",
+    example_ja: "英語を知っていることは大きな利点だ。"
+  },
+  {
+    english: "advise",
+    vietnamese: "khuyên nhủ",
+    japanese: "忠告する",
+    example_en: "The doctor advised me to rest.",
+    example_vi: "Bác sĩ khuyên tôi nên nghỉ ngơi.",
+    example_ja: "医者は私に休むように忠告した。"
+  },
+  {
+    english: "affect",
+    vietnamese: "ảnh hưởng",
+    japanese: "影響する",
+    example_en: "The weather affects our mood.",
+    example_vi: "Thời tiết ảnh hưởng đến tâm trạng của chúng ta.",
+    example_ja: "天気は私たちの気分に影響を与える。"
+  },
+  {
+    english: "agree",
+    vietnamese: "đồng ý",
+    japanese: "同意する",
+    example_en: "I agree with your plan.",
+    example_vi: "Tôi đồng ý với kế hoạch của bạn.",
+    example_ja: "私はあなたの計画に同意します。"
+  },
+  {
+    english: "allow",
+    vietnamese: "cho phép",
+    japanese: "許可する",
+    example_en: "Pets are not allowed in this building.",
+    example_vi: "Vật nuôi không được phép trong tòa nhà này.",
+    example_ja: "この建物ではペットは許可されていない。"
+  },
+  {
+    english: "amount",
+    vietnamese: "số lượng",
+    japanese: "量",
+    example_en: "We need a large amount of water.",
+    example_vi: "Chúng ta cần một lượng nước lớn.",
+    example_ja: "私たちは多量の水を必要としている。"
+  },
+  {
+    english: "animal",
+    vietnamese: "động vật",
+    japanese: "動物",
+    example_en: "A lion is a wild animal.",
+    example_vi: "Sư tử là một động vật hoang dã.",
+    example_ja: "ライオンは野生動物だ。"
+  },
+  {
+    english: "answer",
+    vietnamese: "trả lời",
+    japanese: "答える",
+    example_en: "Please answer the question.",
+    example_vi: "Vui lòng trả lời câu hỏi.",
+    example_ja: "質問に答えてください。"
+  },
+  {
+    english: "anxiety",
+    vietnamese: "sự lo lắng",
+    japanese: "不安",
+    example_en: "He felt a wave of anxiety before the exam.",
+    example_vi: "Anh ấy cảm thấy lo lắng trước kỳ thi.",
+    example_ja: "彼は試験の前に不安の波を感じた。"
+  },
+  {
+    english: "apology",
+    vietnamese: "lời xin lỗi",
+    japanese: "謝罪",
+    example_en: "I received a formal apology.",
+    example_vi: "Tôi đã nhận được một lời xin lỗi chính thức.",
+    example_ja: "私は正式な謝罪を受け取った。"
+  },
+  {
+    english: "appear",
+    vietnamese: "xuất hiện",
+    japanese: "現れる",
+    example_en: "A rainbow appeared in the sky.",
+    example_vi: "Một cầu vồng xuất hiện trên bầu trời.",
+    example_ja: "空に虹が現れた。"
+  },
+  {
+    english: "apply",
+    vietnamese: "áp dụng",
+    japanese: "適用する",
+    example_en: "This rule applies to everyone.",
+    example_vi: "Quy tắc này áp dụng cho tất cả mọi người.",
+    example_ja: "このルールは全員に適用される。"
+  },
+  {
+    english: "argument",
+    vietnamese: "sự tranh cãi",
+    japanese: "議論/口論",
+    example_en: "They had an argument about money.",
+    example_vi: "Họ đã tranh cãi về tiền bạc.",
+    example_ja: "彼らはお金について口論した。"
+  },
+  {
+    english: "arrive",
+    vietnamese: "đến nơi",
+    japanese: "到着する",
+    example_en: "The train arrived on time.",
+    example_vi: "Tàu đã đến đúng giờ.",
+    example_ja: "電車は時間通りに到着した。"
+  },
+  {
+    english: "attitude",
+    vietnamese: "thái độ",
+    japanese: "態度",
+    example_en: "She has a positive attitude toward work.",
+    example_vi: "Cô ấy có thái độ tích cực đối với công việc.",
+    example_ja: "彼女は仕事に対して前向きな態度を持っている。"
+  },
+  {
+    english: "avoid",
+    vietnamese: "tránh né",
+    japanese: "避ける",
+    example_en: "Try to avoid eating junk food.",
+    example_vi: "Hãy cố gắng tránh ăn thức ăn rác.",
+    example_ja: "ジャンクフードを食べるのを避けるようにしなさい。"
+  },
+  // B
+  {
+    english: "bag",
+    vietnamese: "túi xách",
+    japanese: "バッグ",
+    example_en: "He put the books into his bag.",
+    example_vi: "Anh ấy đã bỏ sách vào túi của mình.",
+    example_ja: "彼はバッグの中に本を入れた。"
+  },
+  {
+    english: "beautiful",
+    vietnamese: "đẹp",
+    japanese: "美しい",
+    example_en: "The sunset was extremely beautiful.",
+    example_vi: "Hoàng hôn cực kỳ đẹp.",
+    example_ja: "夕焼けは非常に美しかった。"
+  },
+  {
+    english: "behavior",
+    vietnamese: "hành vi",
+    japanese: "行動/振る舞い",
+    example_en: "His behavior at school was excellent.",
+    example_vi: "Hành vi của anh ấy ở trường rất tuyệt vời.",
+    example_ja: "彼の学校での振る舞いは素晴らしかった。"
+  },
+  {
+    english: "believe",
+    vietnamese: "tin tưởng",
+    japanese: "信じる",
+    example_en: "You must believe in yourself.",
+    example_vi: "Bạn phải tin tưởng vào bản thân.",
+    example_ja: "自分自身を信じなければならない。"
+  },
+  {
+    english: "benefit",
+    vietnamese: "lợi ích",
+    japanese: "恩恵/利益",
+    example_en: "Regular exercise has many benefits.",
+    example_vi: "Tập thể dục thường xuyên có nhiều lợi ích.",
+    example_ja: "定期的な運動には多くの恩恵がある。"
+  },
+  {
+    english: "between",
+    vietnamese: "ở giữa",
+    japanese: "～の間に",
+    example_en: "The shop is between the library and the bank.",
+    example_vi: "Cửa hàng nằm giữa thư viện và ngân hàng.",
+    example_ja: "その店は図書館と銀行の間にある。"
+  },
+  {
+    english: "boundary",
+    vietnamese: "ranh giới",
+    japanese: "境界",
+    example_en: "Respect other people's personal boundaries.",
+    example_vi: "Hãy tôn trọng ranh giới cá nhân của người khác.",
+    example_ja: "他人の個人的な境界線を尊重しなさい。"
+  },
+  {
+    english: "brave",
+    vietnamese: "dũng cảm",
+    japanese: "勇敢な",
+    example_en: "The brave firefighter saved the child.",
+    example_vi: "Người lính cứu hỏa dũng cảm đã cứu đứa trẻ.",
+    example_ja: "勇敢な消防士が子供を救った。"
+  },
+  {
+    english: "build",
+    vietnamese: "xây dựng",
+    japanese: "建てる/構築する",
+    example_en: "They plan to build a new bridge.",
+    example_vi: "Họ lên kế hoạch xây dựng một cây cầu mới.",
+    example_ja: "彼らは新しい橋を架ける計画をしている。"
+  },
+  {
+    english: "business",
+    vietnamese: "kinh doanh",
+    japanese: "ビジネス",
+    example_en: "She runs a small design business.",
+    example_vi: "Cô ấy điều hành một doanh nghiệp thiết kế nhỏ.",
+    example_ja: "彼女は小さなデザインビジネスを経営している。"
+  },
+  // C
+  {
+    english: "calm",
+    vietnamese: "bình tĩnh",
+    japanese: "冷静な/穏やかな",
+    example_en: "Keep calm during the emergency.",
+    example_vi: "Hãy giữ bình tĩnh trong trường hợp khẩn cấp.",
+    example_ja: "緊急時は冷静でいなさい。"
+  },
+  {
+    english: "camera",
+    vietnamese: "máy ảnh",
+    japanese: "カメラ",
+    example_en: "I bought a new digital camera.",
+    example_vi: "Tôi đã mua một chiếc máy ảnh kỹ thuật số mới.",
+    example_ja: "私は新しいデジタルカメラを買った。"
+  },
+  {
+    english: "cancel",
+    vietnamese: "hủy bỏ",
+    japanese: "キャンセルする",
+    example_en: "They decided to cancel the meeting.",
+    example_vi: "Họ đã quyết định hủy bỏ cuộc họp.",
+    example_ja: "彼らは会議をキャンセルすることを決定した。"
+  },
+  {
+    english: "capital",
+    vietnamese: "thủ đô",
+    japanese: "首都",
+    example_en: "Hanoi is the capital of Vietnam.",
+    example_vi: "Hà Nội là thủ đô của Việt Nam.",
+    example_ja: "ハノイはベトナムの首都だ。"
+  },
+  {
+    english: "careful",
+    vietnamese: "cẩn thận",
+    japanese: "注意深い",
+    example_en: "Be careful when crossing the street.",
+    example_vi: "Hãy cẩn thận khi băng qua đường.",
+    example_ja: "通りを横断するときは注意しなさい。"
+  },
+  {
+    english: "cause",
+    vietnamese: "nguyên nhân",
+    japanese: "原因",
+    example_en: "Smoking is a major cause of cancer.",
+    example_vi: "Hút thuốc là nguyên nhân lớn gây ung thư.",
+    example_ja: "喫煙はがんの主な原因だ。"
+  },
+  {
+    english: "century",
+    vietnamese: "thế kỷ",
+    japanese: "世紀",
+    example_en: "We live in the 21st century.",
+    example_vi: "Chúng ta đang sống ở thế kỷ 21.",
+    example_ja: "私たちは21世紀に生きている。"
+  },
+  {
+    english: "certain",
+    vietnamese: "chắc chắn",
+    japanese: "確信して/特定の",
+    example_en: "I am certain that he will pass.",
+    example_vi: "Tôi chắc chắn rằng anh ấy sẽ đỗ.",
+    example_ja: "彼が合格することを私は確信している。"
+  },
+  {
+    english: "chance",
+    vietnamese: "cơ hội",
+    japanese: "機会/チャンス",
+    example_en: "This is your last chance.",
+    example_vi: "Đây là cơ hội cuối cùng của bạn.",
+    example_ja: "これがあなたの最後のチャンスだ。"
+  },
+  {
+    english: "change",
+    vietnamese: "thay đổi",
+    japanese: "変わる/変える",
+    example_en: "You cannot change the past.",
+    example_vi: "Bạn không thể thay đổi quá khứ.",
+    example_ja: "過去を変えることはできない。"
+  },
+  {
+    english: "character",
+    vietnamese: "tính cách",
+    japanese: "性格/文字",
+    example_en: "He is a man of strong character.",
+    example_vi: "Anh ấy là một người có tính cách mạnh mẽ.",
+    example_ja: "彼は強い性格の男だ。"
+  },
+  {
+    english: "choose",
+    vietnamese: "lựa chọn",
+    japanese: "選ぶ",
+    example_en: "Please choose your favorite style.",
+    example_vi: "Vui lòng lựa chọn phong cách yêu thích của bạn.",
+    example_ja: "お好きなスタイルを選んでください。"
+  },
+  {
+    english: "city",
+    vietnamese: "thành phố",
+    japanese: "都市",
+    example_en: "Tokyo is a very crowded city.",
+    example_vi: "Tokyo là một thành phố rất đông đúc.",
+    example_ja: "東京は非常に混雑した都市だ。"
+  },
+  {
+    english: "clean",
+    vietnamese: "sạch sẽ",
+    japanese: "きれいな/掃除する",
+    example_en: "Please keep the room clean.",
+    example_vi: "Vui lòng giữ phòng sạch sẽ.",
+    example_ja: "部屋をきれいにしておいてください。"
+  },
+  {
+    english: "clear",
+    vietnamese: "rõ ràng",
+    japanese: "明らかな/澄んだ",
+    example_en: "The water in this lake is clear.",
+    example_vi: "Nước trong hồ này rất trong.",
+    example_ja: "この湖の水は澄んでいる。"
+  },
+  {
+    english: "close",
+    vietnamese: "đóng lại",
+    japanese: "閉じる/近い",
+    example_en: "Please close the window.",
+    example_vi: "Làm ơn đóng cửa sổ lại.",
+    example_ja: "窓を閉めてください。"
+  },
+  {
+    english: "coffee",
+    vietnamese: "cà phê",
+    japanese: "コーヒー",
+    example_en: "I drink black coffee every morning.",
+    example_vi: "Tôi uống cà phê đen mỗi sáng.",
+    example_ja: "私は毎朝ブラックコーヒーを飲む。"
+  },
+  {
+    english: "collect",
+    vietnamese: "thu thập",
+    japanese: "集める",
+    example_en: "She likes to collect stamps.",
+    example_vi: "Cô ấy thích thu thập tem.",
+    example_ja: "彼女は切手を集めるのが好きだ。"
+  },
+  {
+    english: "common",
+    vietnamese: "phổ biến",
+    japanese: "共通の/一般的な",
+    example_en: "Cold is a very common disease.",
+    example_vi: "Cảm lạnh là một bệnh rất phổ biến.",
+    example_ja: "風邪は非常に一般的な病気だ。"
+  },
+  {
+    english: "company",
+    vietnamese: "công ty",
+    japanese: "会社",
+    example_en: "He works for a software company.",
+    example_vi: "Anh ấy làm việc cho một công ty phần mềm.",
+    example_ja: "彼はソフトウェア会社で働いている。"
+  },
+  {
+    english: "compare",
+    vietnamese: "so sánh",
+    japanese: "比較する",
+    example_en: "Don't compare yourself to others.",
+    example_vi: "Đừng so sánh bản thân với người khác.",
+    example_ja: "自分を他人と比較してはいけない。"
+  },
+  {
+    english: "complete",
+    vietnamese: "hoàn thành",
+    japanese: "完了する",
+    example_en: "You must complete the registration form.",
+    example_vi: "Bạn phải hoàn thành mẫu đăng ký.",
+    example_ja: "登録フォームを記入完了しなければならない。"
+  },
+  {
+    english: "computer",
+    vietnamese: "máy tính",
+    japanese: "コンピュータ",
+    example_en: "I bought a new laptop computer.",
+    example_vi: "Tôi đã mua một chiếc máy tính xách tay mới.",
+    example_ja: "私は新しいノートコンピュータを買った。"
+  },
+  {
+    english: "condition",
+    vietnamese: "điều kiện",
+    japanese: "条件/状態",
+    example_en: "The car is in excellent condition.",
+    example_vi: "Chiếc xe đang trong tình trạng tuyệt vời.",
+    example_ja: "その車は素晴らしい状態だ。"
+  },
+  {
+    english: "continue",
+    vietnamese: "tiếp tục",
+    japanese: "続ける",
+    example_en: "Please continue reading the book.",
+    example_vi: "Vui lòng tiếp tục đọc cuốn sách.",
+    example_ja: "本を読み続けてください。"
+  },
+  {
+    english: "control",
+    vietnamese: "kiểm soát",
+    japanese: "コントロールする/制御",
+    example_en: "It is hard to control your emotions.",
+    example_vi: "Rất khó để kiểm soát cảm xúc của bạn.",
+    example_ja: "感情をコントロールするのは難しい。"
+  },
+  {
+    english: "cook",
+    vietnamese: "nấu ăn",
+    japanese: "料理する",
+    example_en: "My father loves to cook dinner.",
+    example_vi: "Bố tôi rất thích nấu ăn tối.",
+    example_ja: "私の父は夕食を作るのが大好きだ。"
+  },
+  {
+    english: "correct",
+    vietnamese: "chính xác",
+    japanese: "正しい/訂正する",
+    example_en: "Is this the correct address?",
+    example_vi: "Đây có phải là địa chỉ chính xác không?",
+    example_ja: "これが正しい住所ですか？"
+  },
+  {
+    english: "country",
+    vietnamese: "quốc gia",
+    japanese: "国/田舎",
+    example_en: "Vietnam is a beautiful country.",
+    example_vi: "Việt Nam là một đất nước xinh đẹp.",
+    example_ja: "ベトナムは美しい国だ。"
+  },
+  {
+    english: "create",
+    vietnamese: "sáng tạo",
+    japanese: "創造する",
+    example_en: "We want to create a new website.",
+    example_vi: "Chúng tôi muốn tạo ra một trang web mới.",
+    example_ja: "私たちは新しいウェブサイトを作りたい。"
+  },
+  {
+    english: "culture",
+    vietnamese: "văn hóa",
+    japanese: "文化",
+    example_en: "Learning a language helps you understand the culture.",
+    example_vi: "Học một ngôn ngữ giúp bạn hiểu được văn hóa.",
+    example_ja: "言語を学ぶことは文化を理解するのに役立つ。"
+  },
+  {
+    english: "customer",
+    vietnamese: "khách hàng",
+    japanese: "顧客",
+    example_en: "The customer is always right.",
+    example_vi: "Khách hàng luôn luôn đúng.",
+    example_ja: "お客様は常に正しい。"
+  },
+  // D
+  {
+    english: "damage",
+    vietnamese: "thiệt hại",
+    japanese: "損害/ダメージ",
+    example_en: "The storm caused severe damage to the house.",
+    example_vi: "Cơn bão đã gây ra thiệt hại nặng nề cho ngôi nhà.",
+    example_ja: "嵐が家にひどい損害を与えた。"
+  },
+  {
+    english: "danger",
+    vietnamese: "nguy hiểm",
+    japanese: "危険",
+    example_en: "The sign warns of danger ahead.",
+    example_vi: "Biển báo cảnh báo nguy hiểm phía trước.",
+    example_ja: "看板がこの先の危険を警告している。"
+  },
+  {
+    english: "decide",
+    vietnamese: "quyết định",
+    japanese: "決める",
+    example_en: "I cannot decide which one to buy.",
+    example_vi: "Tôi không thể quyết định mua cái nào.",
+    example_ja: "どちらを買うべきか決められない。"
+  },
+  {
+    english: "deep",
+    vietnamese: "sâu sắc",
+    japanese: "深い",
+    example_en: "The water is very deep here.",
+    example_vi: "Nước ở đây rất sâu.",
+    example_ja: "ここの水はとても深い。"
+  },
+  {
+    english: "degree",
+    vietnamese: "bằng cấp/mức độ",
+    japanese: "学位/度",
+    example_en: "He earned a university degree in physics.",
+    example_vi: "Anh ấy đã đạt được bằng đại học ngành vật lý.",
+    example_ja: "彼は物理学の大学の学位を取得した。"
+  },
+  {
+    english: "delicious",
+    vietnamese: "ngon",
+    japanese: "美味しい",
+    example_en: "This soup smells delicious.",
+    example_vi: "Món súp này có mùi rất ngon.",
+    example_ja: "このスープは美味しそうな匂いがする。"
+  },
+  {
+    english: "depend",
+    vietnamese: "phụ thuộc",
+    japanese: "依存する/～次第である",
+    example_en: "Our success depends on teamwork.",
+    example_vi: "Thành công của chúng ta phụ thuộc vào sự hợp tác.",
+    example_ja: "私たちの成功はチームワーク次第だ。"
+  },
+  {
+    english: "describe",
+    vietnamese: "mô tả",
+    japanese: "説明する/描写する",
+    example_en: "Can you describe the missing person?",
+    example_vi: "Bạn có thể mô tả người bị mất tích không?",
+    example_ja: "行方不明者を説明できますか？"
+  },
+  {
+    english: "design",
+    vietnamese: "thiết kế",
+    japanese: "デザインする",
+    example_en: "Who designed this building?",
+    example_vi: "Ai đã thiết kế tòa nhà này?",
+    example_ja: "誰がこの建物を設計したのですか？"
+  },
+  {
+    english: "destroy",
+    vietnamese: "phá hủy",
+    japanese: "破壊する",
+    example_en: "The fire destroyed the forest.",
+    example_vi: "Vụ hỏa hoạn đã phá hủy khu rừng.",
+    example_ja: "火災が森林を破壊した。"
+  },
+  {
+    english: "detail",
+    vietnamese: "chi tiết",
+    japanese: "詳細",
+    example_en: "Please give me more details.",
+    example_vi: "Vui lòng cho tôi biết thêm chi tiết.",
+    example_ja: "もっと詳細を教えてください。"
+  },
+  {
+    english: "develop",
+    vietnamese: "phát triển",
+    japanese: "発達させる/開発する",
+    example_en: "They want to develop a new application.",
+    example_vi: "Họ muốn phát triển một ứng dụng mới.",
+    example_ja: "彼らは新しいアプリケーションを開発したい。"
+  },
+  {
+    english: "difference",
+    vietnamese: "sự khác biệt",
+    japanese: "違い",
+    example_en: "There is a big difference between the two.",
+    example_vi: "Có một sự khác biệt lớn giữa hai cái.",
+    example_ja: "その２つの間には大きな違いがある。"
+  },
+  {
+    english: "difficult",
+    vietnamese: "khó khăn",
+    japanese: "難しい",
+    example_en: "The exam was very difficult.",
+    example_vi: "Kỳ thi đã rất khó.",
+    example_ja: "試験はとても難しかった。"
+  },
+  {
+    english: "direction",
+    vietnamese: "hướng đi",
+    japanese: "方向",
+    example_en: "Which direction are we going?",
+    example_vi: "Chúng ta đang đi theo hướng nào?",
+    example_ja: "私たちはどちらの方向へ向かっているのですか？"
+  },
+  {
+    english: "discover",
+    vietnamese: "khám phá",
+    japanese: "発見する",
+    example_en: "Columbus discovered America.",
+    example_vi: "Columbus đã khám phá ra châu Mỹ.",
+    example_ja: "コロンブスがアメリカを発見した。"
+  },
+  {
+    english: "discuss",
+    vietnamese: "thảo luận",
+    japanese: "議論する/話し合う",
+    example_en: "We need to discuss this matter.",
+    example_vi: "Chúng ta cần thảo luận về vấn đề này.",
+    example_ja: "私たちはこの件について話し合う必要がある。"
+  },
+  {
+    english: "doctor",
+    vietnamese: "bác sĩ",
+    japanese: "医者/博士",
+    example_en: "She wants to be a doctor.",
+    example_vi: "Cô ấy muốn trở thành một bác sĩ.",
+    example_ja: "彼女は医者になりたがっている。"
+  },
+  {
+    english: "dream",
+    vietnamese: "giấc mơ",
+    japanese: "夢",
+    example_en: "My dream is to travel around the world.",
+    example_vi: "Ước mơ của tôi là đi du lịch quanh thế giới.",
+    example_ja: "私の夢は世界中を旅することだ。"
+  },
+  {
+    english: "drink",
+    vietnamese: "uống",
+    japanese: "飲む/飲み物",
+    example_en: "Would you like something to drink?",
+    example_vi: "Bạn có muốn uống cái gì không?",
+    example_ja: "何かお飲み物はいかがですか？"
+  },
+  {
+    english: "during",
+    vietnamese: "trong suốt",
+    japanese: "～の間中",
+    example_en: "I slept during the class.",
+    example_vi: "Tôi đã ngủ trong suốt buổi học.",
+    example_ja: "私は授業中眠っていた。"
+  },
+  // E
+  {
+    english: "early",
+    vietnamese: "sớm",
+    japanese: "早い/早く",
+    example_en: "He wakes up early every morning.",
+    example_vi: "Anh ấy thức dậy sớm mỗi sáng.",
+    example_ja: "彼は毎朝早く起きる。"
+  },
+  {
+    english: "earth",
+    vietnamese: "trái đất",
+    japanese: "地球/土壌",
+    example_en: "The earth goes around the sun.",
+    example_vi: "Trái đất quay quanh mặt trời.",
+    example_ja: "地球は太陽の周りを回っている。"
+  },
+  {
+    english: "easy",
+    vietnamese: "dễ dàng",
+    japanese: "簡単な/易しい",
+    example_en: "English is easy to learn.",
+    example_vi: "Tiếng Anh rất dễ học.",
+    example_ja: "英語を学ぶのは簡単だ。"
+  },
+  {
+    english: "education",
+    vietnamese: "giáo dục",
+    japanese: "教育",
+    example_en: "Education is the key to success.",
+    example_vi: "Giáo dục là chìa khóa của thành công.",
+    example_ja: "教育は成功への鍵だ。"
+  },
+  {
+    english: "effort",
+    vietnamese: "nỗ lực",
+    japanese: "努力",
+    example_en: "You should make an effort to study.",
+    example_vi: "Bạn nên nỗ lực để học tập.",
+    example_ja: "勉強するための努力をすべきだ。"
+  },
+  {
+    english: "election",
+    vietnamese: "cuộc bầu cử",
+    japanese: "選挙",
+    example_en: "The presidential election is next month.",
+    example_vi: "Cuộc bầu cử tổng thống sẽ diễn ra vào tháng tới.",
+    example_ja: "大統領選挙は来月だ。"
+  },
+  {
+    english: "emotion",
+    vietnamese: "cảm xúc",
+    japanese: "感情",
+    example_en: "Music can express deep emotions.",
+    example_vi: "Âm nhạc có thể biểu hiện cảm xúc sâu sắc.",
+    example_ja: "音楽は深い感情を表現できる。"
+  },
+  {
+    english: "encourage",
+    vietnamese: "khuyến khích",
+    japanese: "励ます/促進する",
+    example_en: "My parents encouraged me to play piano.",
+    example_vi: "Bố mẹ tôi đã khuyến khích tôi chơi piano.",
+    example_ja: "私の両親は私がピアノを弾くのを励ましてくれた。"
+  },
+  {
+    english: "energy",
+    vietnamese: "năng lượng",
+    japanese: "エネルギー/活力",
+    example_en: "Solar energy is clean and renewable.",
+    example_vi: "Năng lượng mặt trời rất sạch và có thể tái tạo.",
+    example_ja: "太陽エネルギーはクリーンで再生可能だ。"
+  },
+  {
+    english: "enough",
+    vietnamese: "đủ",
+    japanese: "十分な/十分に",
+    example_en: "I don't have enough time to finish.",
+    example_vi: "Tôi không có đủ thời gian để hoàn thành.",
+    example_ja: "完了させるための十分な時間がない。"
+  },
+  {
+    english: "environment",
+    vietnamese: "môi trường",
+    japanese: "環境",
+    example_en: "We must protect the environment.",
+    example_vi: "Chúng ta phải bảo vệ môi trường.",
+    example_ja: "私たちは環境を保護しなければならない。"
+  },
+  {
+    english: "escape",
+    vietnamese: "trốn thoát",
+    japanese: "逃げる/脱出する",
+    example_en: "The prisoner tried to escape.",
+    example_vi: "Tên tù nhân đã cố gắng trốn thoát.",
+    example_ja: "囚人は脱出しようとした。"
+  },
+  {
+    english: "event",
+    vietnamese: "sự kiện",
+    japanese: "出来事/イベント",
+    example_en: "The concert was a big event.",
+    example_vi: "Buổi hòa nhạc là một sự kiện lớn.",
+    example_ja: "コンサートは大きなイベントだった。"
+  },
+  {
+    english: "example",
+    vietnamese: "ví dụ",
+    japanese: "例/手本",
+    example_en: "Can you give me an example?",
+    example_vi: "Bạn có thể cho tôi một ví dụ không?",
+    example_ja: "例を挙げてもらえますか？"
+  },
+  {
+    english: "excellent",
+    vietnamese: "xuất sắc",
+    japanese: "優れた/優秀な",
+    example_en: "This is an excellent idea.",
+    example_vi: "Đây là một ý tưởng xuất sắc.",
+    example_ja: "これは優れたアイデアだ。"
+  },
+  {
+    english: "excited",
+    vietnamese: "hào hứng",
+    japanese: "興奮した/ワクワクした",
+    example_en: "The children were excited about the trip.",
+    example_vi: "Lũ trẻ hào hứng về chuyến đi.",
+    example_ja: "子供たちは旅行にワクワクしていた。"
+  },
+  {
+    english: "exercise",
+    vietnamese: "tập thể dục/bài tập",
+    japanese: "運動/エクササイズ",
+    example_en: "Running is a good exercise.",
+    example_vi: "Chạy bộ là một bài tập tốt.",
+    example_ja: "ランニングは良い運動だ。"
+  },
+  {
+    english: "experience",
+    vietnamese: "kinh nghiệm/trải nghiệm",
+    japanese: "経験/体験",
+    example_en: "I have five years of experience in sales.",
+    example_vi: "Tôi có năm năm kinh nghiệm trong lĩnh vực bán hàng.",
+    example_ja: "私には販売で5年の経験がある。"
+  },
+  {
+    english: "explain",
+    vietnamese: "giải thích",
+    japanese: "説明する",
+    example_en: "Let me explain the rules.",
+    example_vi: "Để tôi giải thích các quy tắc.",
+    example_ja: "私にルールを説明させてください。"
+  },
+  // F
+  {
+    english: "failure",
+    vietnamese: "sự thất bại",
+    japanese: "失敗",
+    example_en: "Failure teaches us lessons.",
+    example_vi: "Thất bại dạy cho chúng ta những bài học.",
+    example_ja: "失敗は私たちに教訓を教えてくれる。"
+  },
+  {
+    english: "family",
+    vietnamese: "gia đình",
+    japanese: "家族",
+    example_en: "Spending time with family is important.",
+    example_vi: "Dành thời gian cho gia đình là rất quan trọng.",
+    example_ja: "家族と時間を過ごすことは重要だ。"
+  },
+  {
+    english: "famous",
+    vietnamese: "nổi tiếng",
+    japanese: "有名な",
+    example_en: "She is a famous singer.",
+    example_vi: "Cô ấy là một ca sĩ nổi tiếng.",
+    example_ja: "彼女は有名な歌手だ。"
+  },
+  {
+    english: "favorite",
+    vietnamese: "yêu thích",
+    japanese: "お気に入りの",
+    example_en: "What is your favorite food?",
+    example_vi: "Món ăn yêu thích của bạn là gì?",
+    example_ja: "あなたの好きな食べ物は何ですか？"
+  },
+  {
+    english: "fear",
+    vietnamese: "nỗi sợ hãi",
+    japanese: "恐怖/恐れる",
+    example_en: "She overcame her fear of heights.",
+    example_vi: "Cô ấy đã vượt qua nỗi sợ độ cao.",
+    example_ja: "彼女は高所恐怖症を克服した。"
+  },
+  {
+    english: "feeling",
+    vietnamese: "cảm giác/cảm xúc",
+    japanese: "感情/感じ",
+    example_en: "I have a strange feeling about this.",
+    example_vi: "Tôi có một cảm giác kỳ lạ về điều này.",
+    example_ja: "これについては奇妙な感じがする。"
+  },
+  {
+    english: "future",
+    vietnamese: "tương lai",
+    japanese: "未来/将来",
+    example_en: "Who knows what the future holds?",
+    example_vi: "Ai biết được tương lai sẽ thế nào?",
+    example_ja: "将来がどうなるか誰がわかるだろうか？"
+  }
+];
+
+const targetPath = 'storage/db/dictionary_seed.json';
+mkdirSync(dirname(targetPath), { recursive: true });
+writeFileSync(targetPath, JSON.stringify(words, null, 2), 'utf-8');
+console.log(`Generated ${words.length} dictionary words at ${targetPath}`);

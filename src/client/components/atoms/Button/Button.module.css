@@ -1,0 +1,126 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s ease, filter 0.1s ease;
+  outline: none;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Sizes */
+.sm {
+  min-height: 36px;
+  padding: 0 calc(var(--space-unit) * 1.5);
+  font-size: 0.875rem;
+  border-radius: calc(var(--radius-btn) - 4px);
+}
+
+.md {
+  min-height: 44px;
+  padding: 0 calc(var(--space-unit) * 2.5);
+  font-size: 1rem;
+  border-radius: var(--radius-btn);
+}
+
+.lg {
+  min-height: 52px;
+  padding: 0 calc(var(--space-unit) * 3.5);
+  font-size: 1.125rem;
+  border-radius: var(--radius-btn);
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+/* Variants */
+.primary {
+  background-color: var(--berry-500);
+  color: #ffffff;
+  box-shadow: var(--shadow-soft);
+}
+
+.primary:hover:not(:disabled) {
+  background-color: var(--berry-400);
+  box-shadow: var(--shadow-pop);
+}
+
+.primary:active:not(:disabled) {
+  background-color: var(--berry-600);
+  box-shadow: var(--shadow-press);
+  transform: translateY(1px);
+}
+
+.success {
+  background-color: var(--mint-500);
+  color: #ffffff;
+  box-shadow: var(--shadow-soft);
+}
+
+.success:hover:not(:disabled) {
+  filter: brightness(1.05);
+  box-shadow: var(--shadow-pop);
+}
+
+.success:active:not(:disabled) {
+  filter: brightness(0.95);
+  box-shadow: var(--shadow-press);
+  transform: translateY(1px);
+}
+
+.danger {
+  background-color: var(--surface);
+  border: 2px solid var(--coral-500);
+  color: var(--coral-500);
+}
+
+.danger:hover:not(:disabled) {
+  background-color: var(--surface-tint);
+  box-shadow: var(--shadow-soft);
+}
+
+.danger:active:not(:disabled) {
+  background-color: var(--berry-50);
+  box-shadow: var(--shadow-press);
+  transform: translateY(1px);
+}
+
+.soft {
+  background-color: var(--berry-100);
+  color: var(--ink-900);
+}
+
+.soft:hover:not(:disabled) {
+  background-color: var(--berry-200);
+}
+
+.soft:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.ghost {
+  background-color: transparent;
+  color: var(--ink-700);
+}
+
+.ghost:hover:not(:disabled) {
+  background-color: var(--berry-50);
+  color: var(--berry-600);
+}
+
+.ghost:active:not(:disabled) {
+  transform: translateY(1px);
+}

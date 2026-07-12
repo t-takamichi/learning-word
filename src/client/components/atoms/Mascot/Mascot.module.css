@@ -1,0 +1,66 @@
+.mascot {
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* Animations */
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.idle {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes wiggle {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-3deg);
+  }
+  75% {
+    transform: rotate(3deg);
+  }
+}
+
+.happy {
+  animation: wiggle 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes hop {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  40% {
+    transform: translateY(-10px) scale(1.02);
+  }
+  50% {
+    transform: translateY(-10px) scale(0.98);
+  }
+  85% {
+    transform: translateY(0) scale(0.98);
+  }
+}
+
+.cheer {
+  animation: hop 0.8s ease-in-out infinite;
+}
+
+/* Accessibility / Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .idle,
+  .happy,
+  .cheer {
+    animation: none !important;
+    transform: none !important;
+  }
+}

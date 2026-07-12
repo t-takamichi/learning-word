@@ -1,0 +1,112 @@
+.card {
+  background-color: var(--surface);
+  border-radius: var(--radius-card);
+  padding: 20px;
+  box-shadow: var(--shadow-soft);
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  user-select: none;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-pop);
+}
+
+.card:active {
+  transform: translateY(1px);
+}
+
+.card.completed {
+  border-color: var(--mint-500);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  position: relative;
+}
+
+.emoji {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.titleArea {
+  flex: 1;
+}
+
+.title {
+  margin: 0 0 4px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink-900);
+}
+
+.desc {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-700);
+}
+
+.crown {
+  font-size: 24px;
+  position: absolute;
+  top: -12px;
+  right: -8px;
+  transform: rotate(15deg);
+  animation: shine 2s infinite ease-in-out;
+}
+
+.progressSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.progressInfo {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.progressLabel {
+  color: var(--ink-700);
+}
+
+.progressValue {
+  color: var(--berry-500);
+}
+
+.card.completed .progressValue {
+  color: var(--mint-500);
+}
+
+.progressBarBg {
+  height: 12px;
+  background-color: var(--berry-50);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.progressBarFill {
+  height: 100%;
+  background-color: var(--berry-500);
+  border-radius: var(--radius-pill);
+  transition: width 0.3s ease-out;
+}
+
+.completedFill {
+  background-color: var(--mint-500);
+}
+
+@keyframes shine {
+  0%, 100% { transform: rotate(15deg) scale(1); }
+  50% { transform: rotate(15deg) scale(1.15); }
+}

@@ -1,0 +1,54 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  background-color: var(--surface);
+  border-radius: var(--radius-card);
+  padding: 24px 16px;
+  border: 3px solid transparent;
+  box-shadow: var(--shadow-soft);
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  min-width: 140px;
+  text-align: center;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-pop);
+}
+
+.card:active {
+  transform: translateY(1px);
+}
+
+.card.active {
+  border-color: var(--berry-500);
+  box-shadow: 0 12px 32px rgba(255, 111, 165, 0.28);
+}
+
+.username {
+  font-weight: 700;
+  color: var(--ink-900);
+  font-size: 18px;
+  word-break: break-all;
+}
+
+.deleteBtn {
+  background: none;
+  border: none;
+  color: var(--coral-500);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  transition: background-color 0.2s ease;
+  margin-top: 4px;
+}
+
+.deleteBtn:hover {
+  background-color: #FFEAE6; /* coral tint hover */
+}

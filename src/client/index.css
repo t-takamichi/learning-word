@@ -1,0 +1,51 @@
+:root {
+  /* Brand */
+  --berry-500: #FF6FA5;
+  --berry-400: #FF8FB8;
+  --berry-600: #F0568F;
+  --berry-100: #FFE4EF;
+  --berry-50:  #FFF0F5;
+  --berry-200: #FFC1D6;
+
+  /* Accent */
+  --mint-500:     #3FC7A0;
+  --mint-100:     #DFF7EF;
+  --lavender-500: #B69CFF;
+  --sunny-400:    #FFC94D;
+  --coral-500:    #FF7A6B;
+
+  /* Neutral (no pure black) */
+  --ink-900:      #4A2C3A;
+  --ink-700:      #6E5561;
+  --ink-400:      #A38C97;
+  --surface:      #FFFFFF;
+  --surface-tint: #FFF7FA;
+  --bg-gradient:  linear-gradient(180deg, #FFF0F5 0%, #FFE4EF 100%);
+
+  /* Shape */
+  --radius-card: 28px;
+  --radius-btn:  18px;
+  --radius-pill: 9999px;
+  --space-unit:  8px;
+
+  /* Elevation */
+  --shadow-soft:  0 8px 24px rgba(255, 111, 165, 0.18);
+  --shadow-pop:   0 12px 32px rgba(255, 111, 165, 0.28);
+  --shadow-press: 0 2px 8px rgba(255, 111, 165, 0.20);
+}
+
+body {
+  background: var(--bg-gradient);
+  color: var(--ink-700);
+  font-family: "Hiragino Maru Gothic ProN", "Quicksand", "Nunito",
+               system-ui, -apple-system, sans-serif;
+  min-height: 100dvh;
+  margin: 0;
+}
+
+body[data-lang="vi"] .ja-content {
+  display: none;
+}
+body[data-lang="ja"] .vi-content {
+  display: none;
+}

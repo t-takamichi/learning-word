@@ -1,0 +1,1 @@
+export { CompleteTemplate } from './CompleteTemplate';

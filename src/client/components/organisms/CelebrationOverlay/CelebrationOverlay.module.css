@@ -1,0 +1,131 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(74, 44, 58, 0.4);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  cursor: pointer;
+}
+
+.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.hide {
+  opacity: 0;
+}
+
+.content {
+  background-color: var(--surface);
+  border-radius: var(--radius-card);
+  padding: 32px;
+  max-width: 360px;
+  width: 90%;
+  box-shadow: var(--shadow-pop);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  box-sizing: border-box;
+  animation: scaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes scaleUp {
+  0% {
+    transform: scale(0.8);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.sparkleWrapper {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+}
+
+.mascot {
+  margin-bottom: 16px;
+}
+
+.textGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.title {
+  color: var(--berry-600);
+  font-weight: 800;
+}
+
+.subtitle {
+  color: var(--ink-700);
+  font-weight: 700;
+}
+
+/* Confetti Styles */
+.confettiContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.confetti {
+  position: absolute;
+  top: -20px;
+  opacity: 0;
+  animation: fall linear forwards;
+}
+
+.rect {
+  border-radius: 2px;
+}
+
+.circle {
+  border-radius: 50%;
+}
+
+@keyframes fall {
+  0% {
+    top: -20px;
+    opacity: 1;
+    transform: translateX(0) rotate(0deg);
+  }
+  100% {
+    top: 105%;
+    opacity: 0;
+    transform: translateX(50px) rotate(360deg);
+  }
+}
+
+/* Accessibility / Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .overlay {
+    backdrop-filter: none;
+  }
+  .content {
+    animation: none;
+  }
+  .confetti {
+    animation: none !important;
+    top: 40px;
+    opacity: 0.7;
+  }
+}

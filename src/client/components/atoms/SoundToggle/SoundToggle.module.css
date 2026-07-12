@@ -1,0 +1,24 @@
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-pill);
+  background-color: var(--berry-100);
+
+  border: none;
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.1s ease, background-color 0.1s ease;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.toggle:hover {
+  background-color: var(--berry-200);
+}
+
+.toggle:active {
+  transform: translateY(1px);
+}

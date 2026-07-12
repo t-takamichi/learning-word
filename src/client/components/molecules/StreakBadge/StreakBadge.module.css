@@ -1,0 +1,42 @@
+.container {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background-color: var(--berry-100);
+  padding: 4px 8px;
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-soft);
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.fireIcon {
+  filter: drop-shadow(0 2px 4px rgba(255, 201, 77, 0.4));
+  animation: pulse 1.2s infinite alternate ease-in-out;
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .container,
+  .fireIcon {
+    animation: none !important;
+  }
+}

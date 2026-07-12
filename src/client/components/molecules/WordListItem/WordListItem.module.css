@@ -1,0 +1,143 @@
+.card {
+  background-color: var(--surface);
+  border-radius: var(--radius-btn);
+  padding: 16px;
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-pop);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.wordInfo {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.english {
+  color: var(--ink-900);
+  font-weight: 800;
+  font-size: 1.25rem;
+}
+
+.badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-flex;
+  align-items: center;
+}
+
+.badgeNew {
+  background-color: var(--sunny-400);
+  color: var(--ink-900);
+}
+
+.badgeWeak {
+  background-color: var(--coral-500);
+  color: #FFFFFF;
+}
+
+.badgeMastered {
+  background-color: var(--mint-500);
+  color: #FFFFFF;
+}
+
+.translations {
+  color: var(--ink-700);
+  font-weight: 500;
+  font-size: 0.95rem;
+  margin-top: 4px;
+}
+
+.examples {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(255, 111, 165, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.exampleEn {
+  color: var(--ink-800);
+  font-style: italic;
+  font-size: 0.85rem;
+}
+
+.noteSection {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  border-top: 1px solid rgba(255, 111, 165, 0.08);
+  padding-top: 8px;
+}
+
+.noteInput {
+  flex: 1;
+  border: 1px solid var(--ink-200);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  background-color: var(--surface-subtle);
+  color: var(--ink-800);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.noteInput:focus {
+  border-color: var(--berry-300);
+}
+
+.saveButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s ease;
+}
+
+.saveButton:active {
+  transform: scale(0.9);
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.dateText {
+  font-size: 0.75rem;
+  color: var(--ink-400);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card:hover {
+    transform: none;
+  }
+}

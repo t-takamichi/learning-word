@@ -1,0 +1,109 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.playButton {
+  flex: 1;
+}
+
+.settingsToggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-pill);
+  background-color: var(--berry-100);
+  border: none;
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.3s ease, background-color 0.2s ease;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.settingsToggle:hover {
+  background-color: var(--berry-200);
+}
+
+.settingsToggle:active {
+  transform: scale(0.95);
+}
+
+.expanded {
+  transform: rotate(45deg);
+}
+
+.settingsPanel {
+  display: flex;
+  gap: 16px;
+  background-color: var(--berry-100);
+  border-radius: var(--radius-btn);
+  padding: 12px 16px;
+  box-sizing: border-box;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.settingField {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.label {
+  color: var(--ink-700);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.input {
+  width: 100%;
+  min-width: 50px;
+  height: 36px;
+  border: 2px solid transparent;
+  border-radius: calc(var(--radius-btn) - 6px);
+  padding: 0 8px;
+  background-color: var(--surface);
+  color: var(--ink-900);
+  font-family: inherit;
+  font-weight: 700;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.input:focus {
+  border-color: var(--berry-400);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .settingsToggle,
+  .settingsPanel {
+    animation: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}

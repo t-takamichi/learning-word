@@ -1,0 +1,79 @@
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  border: 3px solid var(--surface);
+  box-shadow: var(--shadow-soft);
+  position: relative;
+  user-select: none;
+}
+
+.xs {
+  width: 28px;
+  height: 28px;
+  font-size: 12px;
+  border-width: 2px !important;
+}
+
+.xs .strawberry {
+  display: none;
+}
+
+.sm {
+  width: 40px;
+  height: 40px;
+  font-size: 16px;
+}
+
+
+.md {
+  width: 64px;
+  height: 64px;
+  font-size: 24px;
+}
+
+.lg {
+  width: 96px;
+  height: 96px;
+  font-size: 36px;
+}
+
+.initial {
+  z-index: 2;
+}
+
+.strawberry {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  font-size: 0.8em;
+  z-index: 3;
+}
+
+/* 5 pastel background colors derived from tokens */
+.bg-0 {
+  background-color: var(--berry-100);
+  color: var(--berry-600);
+}
+
+.bg-1 {
+  background-color: var(--mint-100);
+  color: var(--mint-500);
+}
+
+.bg-2 {
+  background-color: #E6E0FF; /* lavender tint */
+  color: var(--lavender-500);
+}
+
+.bg-3 {
+  background-color: #FFF3D1; /* sunny tint */
+  color: #D4A300;
+}
+
+.bg-4 {
+  background-color: #FFEAE6; /* coral tint */
+  color: var(--coral-500);
+}

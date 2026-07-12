@@ -1,0 +1,19 @@
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  flex-shrink: 0;
+}
+
+.new {
+  background-color: var(--lavender-500);
+}
+
+.weak {
+  background-color: var(--coral-500);
+}
+
+.mastered {
+  background-color: var(--mint-500);
+}

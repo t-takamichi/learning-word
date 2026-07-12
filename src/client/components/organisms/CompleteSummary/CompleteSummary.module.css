@@ -1,0 +1,45 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 32px 16px;
+  box-sizing: border-box;
+}
+
+.mascot {
+  margin-bottom: 16px;
+}
+
+.title {
+  color: var(--berry-600);
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.message {
+  color: var(--ink-700);
+  margin-bottom: 32px;
+}
+
+.stats {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 32px;
+  box-sizing: border-box;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.button {
+  width: 100%;
+}

@@ -1,0 +1,1 @@
+export { StudyTemplate } from './StudyTemplate';

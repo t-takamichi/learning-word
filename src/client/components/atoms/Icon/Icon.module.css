@@ -1,0 +1,6 @@
+.icon {
+  display: inline-block;
+  vertical-align: middle;
+  color: var(--berry-500);
+  flex-shrink: 0;
+}
