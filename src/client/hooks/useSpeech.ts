@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 export interface UseSpeechReturn {
-  speak: (text: string, onend?: () => void) => void;
+  speak: (text: string, onend?: () => void, rate?: number) => void;
   cancel: () => void;
   isSpeaking: boolean;
   isSupported: boolean;
@@ -54,7 +54,7 @@ export function useSpeech(): UseSpeechReturn {
   }, []);
 
   const speak = useCallback(
-    (text: string, onend?: () => void): void => {
+    (text: string, onend?: () => void, rate?: number): void => {
       const audio = audioRef.current;
       if (!audio) {
         if (onend) onend();
@@ -70,6 +70,16 @@ export function useSpeech(): UseSpeechReturn {
       const url = `/api/tts?text=${encodeURIComponent(text)}`;
       audio.src = url;
       audio.load();
+
+      // Apply playbackRate (safeguarded against load() reset on some browsers)
+      const targetRate = rate ?? 1.0;
+      audio.playbackRate = targetRate;
+      
+      const onCanPlay = () => {
+        audio.playbackRate = targetRate;
+        audio.removeEventListener('canplay', onCanPlay);
+      };
+      audio.addEventListener('canplay', onCanPlay);
 
       audio.play().catch((err) => {
         // AbortError occurs when a play request is interrupted by pause() (e.g. going to next word rapidly).

@@ -72,6 +72,7 @@ export function StudyPage(): React.ReactElement | null {
 
   const [autoPlayFrontDelay, setAutoPlayFrontDelay] = useState(3);
   const [autoPlayBackDelay, setAutoPlayBackDelay] = useState(4);
+  const lastSpokenWordIdRef = React.useRef<number | null>(null);
 
   const { isAutoPlay, toggleAutoPlay } = useAutoPlay({
     words,
@@ -106,6 +107,27 @@ export function StudyPage(): React.ReactElement | null {
   useEffect(() => {
     document.body.dataset['lang'] = language;
   }, [language]);
+
+  // Pronounce word and example slowly when flipping card manually
+  useEffect(() => {
+    const currentWord = words[currentIndex];
+    if (!isAutoPlay && isAnswerVisible && currentWord) {
+      if (lastSpokenWordIdRef.current !== currentWord.id) {
+        lastSpokenWordIdRef.current = currentWord.id;
+        const textToSpeak = currentWord.example_en 
+          ? `${currentWord.english}. ${currentWord.example_en}`
+          : currentWord.english;
+        speech.speak(textToSpeak, undefined, 0.8);
+      }
+    }
+  }, [isAutoPlay, isAnswerVisible, words, currentIndex, speech]);
+
+  // Reset lastSpokenWordIdRef when answer is hidden (returned to front side)
+  useEffect(() => {
+    if (!isAnswerVisible) {
+      lastSpokenWordIdRef.current = null;
+    }
+  }, [isAnswerVisible]);
 
   // Complete screen triggers complete celebration
   useEffect(() => {

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { UseSpeechReturn } from './useSpeech';
 
 interface UseAutoPlayOptions {
-  readonly words: readonly { readonly english: string }[];
+  readonly words: readonly { readonly english: string; readonly example_en?: string | null }[];
   readonly currentIndex: number;
   readonly isAnswerVisible: boolean;
   readonly showAnswer: () => void;
@@ -30,6 +30,14 @@ export function useAutoPlay({
   const [isAutoPlay, setIsAutoPlay] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isAutoPlayRef = useRef(false);
+  const lastSpokenIndexRef = useRef<number | null>(null);
+
+  // Reset lastSpokenIndexRef when answer is hidden (returned to front side)
+  useEffect(() => {
+    if (!isAnswerVisible) {
+      lastSpokenIndexRef.current = null;
+    }
+  }, [isAnswerVisible]);
 
   const clearTimer = useCallback((): void => {
     if (timerRef.current !== null) {
@@ -67,17 +75,38 @@ export function useAutoPlay({
     });
   }, [isAutoPlay, words, currentIndex, speech, frontDelay, showAnswer, stop]);
 
-  // After flipping, wait backDelay seconds then transition to next card
+  // After flipping, speak translation/example slowly, then wait backDelay seconds and transition to next card
   useEffect(() => {
     if (!isAutoPlay || !isAnswerVisible) return;
 
-    timerRef.current = setTimeout(() => {
-      if (!isAutoPlayRef.current) return;
-      goNext();
-    }, backDelay * 1000);
+    const word = words[currentIndex];
+    if (!word) return;
 
-    return () => clearTimer();
-  }, [isAutoPlay, isAnswerVisible, backDelay, goNext, clearTimer]);
+    // Prevent duplicate speech
+    if (lastSpokenIndexRef.current === currentIndex) return;
+    lastSpokenIndexRef.current = currentIndex;
+
+    const textToSpeak = word.example_en 
+      ? `${word.english}. ${word.example_en}`
+      : word.english;
+
+    speech.speak(
+      textToSpeak,
+      () => {
+        if (!isAutoPlayRef.current) return;
+        timerRef.current = setTimeout(() => {
+          if (!isAutoPlayRef.current) return;
+          goNext();
+        }, backDelay * 1000);
+      },
+      0.8 // slow down
+    );
+
+    return () => {
+      clearTimer();
+      speech.cancel();
+    };
+  }, [isAutoPlay, isAnswerVisible, currentIndex, words, speech, backDelay, goNext, clearTimer]);
 
   // After transition (currentIndex change), trigger speech for the next word
   useEffect(() => {

@@ -147,3 +147,48 @@
 * **検証結果**:
   - `yarn typecheck` を実行し、合格を確認 (**Done in 8.22s**)。
   - `activeUserId` が `null` (ユーザー未選択) のとき、`/levels` にアクセスすると即座に永久ロードを抜け出し、ユーザー選択画面 `/users` に安全に自動リダイレクトされることを確認。
+
+---
+
+## 実行ログ - 2026-07-15T00:08:00+09:00
+
+### 1. ユーザー指示
+* **インプット**:
+  - 指示: 「なんか例文が複数回再生されるんだけどね。一回にして」
+  - （および前回の「答え表示時の表示枠拡張と例文スクロール削減」、「めくった瞬間のゆっくり自動発音」を包含）
+
+---
+
+### 2. STEP 1: 設計書の自動同期 (design-sync)
+* **更新ファイル**:
+  - [flashcard.md](../design/flashcard.md) (フラッシュカード機能 詳細設計)
+* **変更内容**:
+  - カード裏面表示時に、単語および英語例文（結合テキスト）がゆっくり（0.8倍速）重複なく自動発音される受け入れ基準 (**AC13**) を追加。
+  - カード高さ（380px〜400px）および例文最大高さ（140px）に拡張する受け入れ基準 (**AC12**) を追加。
+
+---
+
+### 3. STEP 2 & 3: 影響範囲・フェーズ定義更新および計画書マージ (phase-sync / plan-sync)
+* **影響フェーズ番号**: UX-5 (Organisms)
+* **更新ファイル**:
+  - [phase-5.md](../impl/ux/phase-5.md) (UX-5 実装計画書)
+* **変更内容**:
+  - ゴール、タスク詳細 (T1)、受け入れ基準 (AC) に「裏面めくり時のゆっくり自動音声再生（結合テキスト、0.8倍速、重複トリガーの防止）」および「表示領域拡張（カード高さ400px、例文最大高さ140px）」を追加マージ。
+
+---
+
+### 4. STEP 4: 自動実装・検証・自己修復 (impl-sync)
+* **修正コード**:
+  - [FlashCard.module.css](../../../src/client/components/organisms/FlashCard/FlashCard.module.css)
+    - カード高さを `400px`、例文コンテナの `max-height` を `140px` に拡張。
+  - [useSpeech.ts](../../../src/client/hooks/useSpeech.ts)
+    - `speak` 関数に `rate` オプションを追加し、`playbackRate` を制御可能に。
+  - [useAutoPlay.ts](../../../src/client/hooks/useAutoPlay.ts)
+    - `lastSpokenIndexRef` (useRef) を導入し、自動再生で裏面になった際の発音を一回のみに制限。発音完了後に `backDelay` 秒待機するよう遷移フローを安全に制御。表面に戻った時に状態をリセット。
+  - [StudyPage.tsx](../../../src/client/pages/StudyPage.tsx)
+    - `lastSpokenWordIdRef` (useRef) を導入し、手動でカードをめくった際の発音を一回のみに制限。再レンダリングや TanStack Query の更新（キャッシュ再取得等）による複数回再生を完全に防止。
+* **検証結果**:
+  - TypeScript コンパイルチェック: `yarn typecheck` 合格。
+  - プロダクションビルド: `yarn build` 合格。
+  - 自己修復リトライ回数: 0回。
+
