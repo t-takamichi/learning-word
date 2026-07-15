@@ -718,6 +718,17 @@
 
 ---
 
+### T-ADD-1: iOSでの音声再生(TTS)非同期アンロック対応
+
+- **ファイル**: `src/client/hooks/useSpeech.ts`, `src/client/pages/StudyPage.tsx`
+- **やること**:
+  1. `useSpeech.ts` の `Audio` インスタンス生成をモジュールスコープ（またはグローバルなシングルトン）での共有インスタンスに変更する。
+  2. `useSpeech.ts` に `unlockSpeechAudio()` というアンロック用関数を定義し、ユーザーのジェスチャー（タップ等）の同期コールバック内で、無音のデータURIを設定した `play()` を実行してインスタンスをアンロックできるようにする。
+  3. `StudyPage.tsx` などのユーザー操作インタラクションイベントリスナー (`pointerdown`, `touchend`, `keydown`) の中で、効果音のアンロック (`unlock()`) と同時に `unlockSpeechAudio()` も呼び出して、HTML5 Audio のアンロックを行う。
+- **検証**: iOSのSafariにおいて、カードがめくられた際の `useEffect` による自動再生や、自動再生モード (`useAutoPlay`) による非同期再生時でも英語音声がブロックされずに正しく鳴ることを確認。
+
+---
+
 ## 6. Done の定義（受け入れ基準チェックリスト）
 
 ### フェーズゴール
@@ -728,11 +739,10 @@
 - [ ] 🔊 ボタンをタップすると英語音声が再生される
 
 ### iOS Safari 技術スパイク（R1/R2）
-- [ ] iPhone Safari でタップイベント起点の `speechSynthesis.speak()` が動作する
-- [ ] 3回以上連続して音声再生が正常に動作する（自動停止しない）
-- [ ] 条件付き `synth.cancel()`（`speaking || pending`）で再タップ時の多重再生が防止されている
-- [ ] Chrome・Safari で 🔊 ボタンから英語音声が再生される（無条件 cancel による無音デグレがない）
-- [ ] voice 事前ウォームアップにより、初回タップでも音声が鳴る
+- [ ] iPhone Safari/Chrome のユーザー操作（同期イベント）内で、共有 `HTMLAudioElement` の `play()` が正常に呼び出され、アンロックされること。
+- [ ] アンロック後、非同期処理（`/api/tts` の fetch / ロード等）や `useEffect` / `useAutoPlay` タイマーなどの非同期コンテキストから `speech.speak()` が正常に再生されること。
+- [ ] 3回以上連続して音声再生が正常に動作すること。
+- [ ] 条件付き `synth.cancel()` の代わりに、HTML5 Audio の `pause()` および `src` 切り替えが正しく制御され、多重再生が防止されていること。
 
 ### 設計 AC（flashcard.md）
 - [ ] AC1: `GET /api/session` から Word[] 10件が取得され、1枚目のカード表面（英語）が表示される

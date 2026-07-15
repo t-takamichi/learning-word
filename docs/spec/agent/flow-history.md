@@ -192,3 +192,46 @@
   - プロダクションビルド: `yarn build` 合格。
   - 自己修復リトライ回数: 0回。
 
+---
+
+## 実行ログ - 2026-07-15T22:45:00+09:00
+
+### 1. ユーザー指示
+* **インプット**: `/flow iphoneだと音声が出ないけど、何か罠があったりする`
+
+---
+
+### 2. STEP 1: 設計書の自動同期 (design-sync)
+* **更新ファイル**:
+  - [architecture.md](../design/architecture.md)
+  - [risks.md](../design/risks.md)
+* **変更内容**:
+  - 音声再生の技術スタック（Web Speech API からサーバーサイドTTS + HTML5 Audioへの変更）を明記。
+  - iOS/Safariにおける `HTMLAudioElement` の自動再生ポリシー（User Gesture Requirement）制限と、それを回避するための共有インスタンスを用いたアンロック処理に関する仕様を追加。
+
+---
+
+### 3. STEP 2 & 3: 影響範囲・フェーズ定義更新および計画書マージ (phase-sync / plan-sync)
+* **影響フェーズ番号**: Phase 1 (Walking Skeleton)
+* **更新ファイル**:
+  - [phase-1.md](../impl/phase/phase-1.md)
+  - [plan.md](../impl/steps/1/plan.md)
+* **変更内容**:
+  - リスク対策とDoneの定義を HTML5 Audio のアンロック要件に更新。
+  - 音声の非同期アンロック対応タスク（`T-ADD-1`）を計画書に追加。
+
+---
+
+### 4. STEP 4: 自動実装・検証・自己修復 (impl-sync)
+* **修正コード**:
+  - [useSpeech.ts](../../../src/client/hooks/useSpeech.ts)
+    - `Audio` インスタンス生成をモジュールスコープの共有シングルトンに変更。
+    - `unlockSpeechAudio()` を新規にエクスポートし、無音WAV（1サンプルデータURI）を同期再生してアンロックする処理を実装。
+    - `cancel()` 時に `src` をクリアする代わりに無音のデータURIを設定し、アンロック状態を失わずに安全にリソースをクリアするように修正。
+  - [StudyPage.tsx](../../../src/client/pages/StudyPage.tsx)
+    - ユーザーインタラクションイベントリスナー (`pointerdown`, `touchend`, `keydown`) 内で、効果音用の `unlock()` だけでなく、TTS用の `unlockSpeechAudio()` も同時に同期呼び出しするよう変更。
+* **検証結果**:
+  - `yarn typecheck` 合格。
+  - `yarn build` 合格。
+  - 自己修復リトライ回数: 0回。
+

@@ -8,7 +8,7 @@
 | Backend | Hono（Bun runtime） | 軽量・高速・TypeScriptネイティブ。`zValidator`で型安全なAPI設計が可能。Bunでシングルバイナリに近い形で運用可能 |
 | DB | SQLite（Bun built-in） | シングルユーザー・小規模データに最適。外部DBサーバー不要でデプロイが単純。BunのネイティブSQLiteで追加依存なし |
 | スタイリング | CSS Modules | グローバル汚染なし。iPhoneセーフエリア対応を各コンポーネント単位で管理しやすい |
-| 音声 | Web Speech API（ブラウザ標準） | 外部サービス不要・ゼロコスト。iOS制限の回避策は既知で対応可能 |
+| 音声 | サーバーサイドTTS + HTML5 Audio | サーバー側でPiper/TTSエンジンを使用。HTMLAudioElementで再生。iOS自動再生制限の回避策が必要 |
 | ホスティング | Bun serve（単一プロセス） | HonoでAPIとReact静的ファイルを同一サーバーで配信。引っ越しが容易 |
 
 ### なぜ Vanilla JS ではなく React を選んだか
@@ -221,8 +221,8 @@ type AppState = {
 
 | 制約 | 対策 |
 |------|------|
-| Web Speech API はユーザーアクション起点必須 | 最初の発音は必ずタップイベント内で実行 |
-| `speechSynthesis.speak()` が途中で止まる | `synth.cancel()` を先行実行してから `speak()` |
+| HTML5 Audio はユーザーアクション起点必須（非同期再生不可） | 最初のユーザー操作（タップ等）の同期コールバック内で、共有 `HTMLAudioElement` の `play()` を実行してアンロックする。以降はこのアンロック済みインスタンスを使い回す。 |
+| 自動再生やuseEffectからの非同期音声再生がブロックされる | 上記の共有 `HTMLAudioElement` をアンロック後に `src` を書き換えて再生することで、非同期コンテキストや自動再生でも再生を可能にする。 |
 | サイレントスイッチで音が出ない | UIに「音が出ない場合はサイレントモードを確認」の説明表示 |
 | セーフエリア | `env(safe-area-inset-bottom)` をCSSで適用（固定フッターボタン） |
 | `100vh` 問題 | `100dvh` を使用（iOS 15.4+対応、フォールバックあり） |

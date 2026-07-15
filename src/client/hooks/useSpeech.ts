@@ -7,15 +7,47 @@ export interface UseSpeechReturn {
   isSupported: boolean;
 }
 
+let sharedAudio: HTMLAudioElement | null = null;
+
+export const getSharedAudio = (): HTMLAudioElement => {
+  if (typeof window === 'undefined') return {} as HTMLAudioElement;
+  if (!sharedAudio) {
+    sharedAudio = new Audio();
+  }
+  return sharedAudio;
+};
+
+/**
+ * Unlocks the HTML5 Audio element for iOS Safari/Chrome.
+ * Must be called synchronously within a real user interaction handler.
+ */
+export const unlockSpeechAudio = (): void => {
+  if (typeof window === 'undefined') return;
+  const audio = getSharedAudio();
+  if (!audio) return;
+  // If not initialized or currently holding a dummy source, trigger a quick play/pause.
+  if (!audio.src || audio.src.startsWith('data:')) {
+    audio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==';
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          audio.pause();
+        })
+        .catch((err) => {
+          console.warn('Failed to unlock speech audio:', err);
+        });
+    }
+  }
+};
+
 export function useSpeech(): UseSpeechReturn {
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   const onEndRef = useRef<(() => void) | undefined>(undefined);
 
-  // Initialize a single Audio instance and attach listeners once.
+  // Initialize and attach listeners once to the shared Audio instance.
   useEffect(() => {
-    const audio = new Audio();
-    audioRef.current = audio;
+    const audio = getSharedAudio();
 
     const handleEnded = () => {
       setIsSpeaking(false);
@@ -39,27 +71,21 @@ export function useSpeech(): UseSpeechReturn {
       audio.removeEventListener('ended', handleEnded);
       audio.removeEventListener('error', handleError as any);
       audio.pause();
-      audio.src = '';
-      audioRef.current = null;
     };
   }, []);
 
   const cancel = useCallback((): void => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.removeAttribute('src');
-      audioRef.current.load();
-      setIsSpeaking(false);
-    }
+    const audio = getSharedAudio();
+    audio.pause();
+    // Safety: set dummy silent source to release resources and reset state without breaking unlock
+    audio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==';
+    audio.load();
+    setIsSpeaking(false);
   }, []);
 
   const speak = useCallback(
     (text: string, onend?: () => void, rate?: number): void => {
-      const audio = audioRef.current;
-      if (!audio) {
-        if (onend) onend();
-        return;
-      }
+      const audio = getSharedAudio();
 
       // Stop any current audio immediately
       audio.pause();
