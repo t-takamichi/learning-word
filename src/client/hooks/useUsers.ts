@@ -1,31 +1,24 @@
 import { useMutation } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 interface User {
   id: number;
   username: string;
 }
 
-export function useUsers() {
-  const [activeUserId, setActiveUserId] = useState<number | null>(null);
-  const [activeUsername, setActiveUsername] = useState<string | null>(null);
-  const [activeUserToken, setActiveUserToken] = useState<string | null>(null);
+// Read synchronously so the value is correct on the very first render. Hydrating
+// via useEffect leaves a window where these are null, which makes route guards
+// (e.g. WordSetSelectPage) redirect to /users before the real user is restored.
+const readStored = (key: string): string | null =>
+  typeof window === 'undefined' ? null : localStorage.getItem(key);
 
-  // Load active user ID, username and token from localStorage on mount
-  useEffect(() => {
-    const savedId = localStorage.getItem('active_user_id');
-    const savedName = localStorage.getItem('active_username');
-    const savedToken = localStorage.getItem('active_user_token');
-    if (savedId) {
-      setActiveUserId(Number(savedId));
-    }
-    if (savedName) {
-      setActiveUsername(savedName);
-    }
-    if (savedToken) {
-      setActiveUserToken(savedToken);
-    }
-  }, []);
+export function useUsers() {
+  const [activeUserId, setActiveUserId] = useState<number | null>(() => {
+    const saved = readStored('active_user_id');
+    return saved ? Number(saved) : null;
+  });
+  const [activeUsername, setActiveUsername] = useState<string | null>(() => readStored('active_username'));
+  const [activeUserToken, setActiveUserToken] = useState<string | null>(() => readStored('active_user_token'));
 
   const selectUser = (user: { id: number; username: string; token: string }): void => {
     setActiveUserId(user.id);

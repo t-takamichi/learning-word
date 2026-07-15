@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { hc } from 'hono/client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { AppType } from '../../server/index';
 
 const client = hc<AppType>('/');
@@ -19,15 +19,13 @@ interface WordSet {
 }
 
 export function useWordSets(userId: number | null) {
-  const [activeWordSetId, setActiveWordSetId] = useState<number | null>(null);
-
-  // Load active word set ID from localStorage on mount
-  useEffect(() => {
+  // Read synchronously so the id is correct on the first render (avoids a null
+  // window that would leave the session query disabled / show an empty state).
+  const [activeWordSetId, setActiveWordSetId] = useState<number | null>(() => {
+    if (typeof window === 'undefined') return null;
     const saved = localStorage.getItem('active_word_set_id');
-    if (saved) {
-      setActiveWordSetId(Number(saved));
-    }
-  }, []);
+    return saved ? Number(saved) : null;
+  });
 
   const selectWordSet = (id: number): void => {
     setActiveWordSetId(id);
