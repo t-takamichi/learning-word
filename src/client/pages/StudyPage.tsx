@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSession } from '../hooks/useSession';
 import { useAutoPlay } from '../hooks/useAutoPlay';
-import { useSpeech, unlockSpeechAudio } from '../hooks/useSpeech';
+import { useSpeech } from '../hooks/useSpeech';
 import { useSound } from '../hooks/useSound';
 import { useUsers } from '../hooks/useUsers';
 import { useWordSets } from '../hooks/useWordSets';
@@ -93,7 +93,6 @@ export function StudyPage(): React.ReactElement | null {
     const events: (keyof DocumentEventMap)[] = ['pointerdown', 'touchend', 'keydown'];
     const handleInteraction = (): void => {
       unlock();
-      unlockSpeechAudio();
       if (isUnlocked()) {
         events.forEach((evt) => document.removeEventListener(evt, handleInteraction));
       }
