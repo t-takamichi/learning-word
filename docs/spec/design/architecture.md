@@ -152,7 +152,7 @@ LIMIT 6;
 | GET | `/api/words/:id` | なし | 単語1件取得 | - | `Word` |
 | POST | `/api/users` | なし | ユーザー登録（PIN設定） | `{ username, pin }` | `{ id, username, token }` |
 | POST | `/api/users/login` | なし | ユーザーログイン | `{ username, pin }` | `{ id, username, token }` |
-| DELETE | `/api/users/:id` | トークン | ユーザー削除（トークン必須・本人限定） | - (X-User-Token ヘッダー) | `{ success: true }` |
+| DELETE | `/api/users/:id` | トークン | ユーザー削除（トークン必須・本人限定・本人確認必須） | `{ pin }` (X-User-Token ヘッダー) | `{ success: true }` |
 | POST | `/api/admin/words` | Basic | 単語追加 | `WordInput` | `Word` |
 | PUT | `/api/admin/words/:id` | Basic | 単語更新 | `Partial<WordInput>` | `Word` |
 | DELETE | `/api/admin/words/:id` | Basic | 単語削除 | - | `{ ok: true }` |

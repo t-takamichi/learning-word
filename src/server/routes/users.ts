@@ -192,7 +192,7 @@ export function createUsersRoute(db: DB) {
 
       return c.json({ id: user.id, username: user.username, token: newToken });
     })
-    .delete('/:id', auth, (c) => {
+    .delete('/:id', auth, async (c) => {
       const id = Number(c.req.param('id'));
       const activeUser = c.get('user');
 
@@ -201,7 +201,29 @@ export function createUsersRoute(db: DB) {
         return c.json({ error: 'Forbidden: Cannot delete other users' }, 403);
       }
 
-      repo.delete(id);
-      return c.json({ success: true });
+      try {
+        const { pin } = await c.req.json<{ pin?: string }>();
+        if (!pin || !pin.trim()) {
+          return c.json({ error: '合言葉(PIN)が必要です。' }, 400);
+        }
+
+        const user = repo.findById(id);
+        if (!user || !user.pin_hash) {
+          return c.json({ error: 'ユーザーが存在しません。' }, 404);
+        }
+
+        const isValid = verifyPin(pin.trim(), user.pin_hash);
+        if (!isValid) {
+          // 403 (not 401): the token IS valid — only the confirmation PIN is wrong.
+          // Returning 401 here would trip authedFetch's global "token expired ->
+          // logout" handling and bounce the user out on a simple mistype.
+          return c.json({ error: '合言葉(PIN)が正しくありません。' }, 403);
+        }
+
+        repo.delete(id);
+        return c.json({ success: true });
+      } catch (e) {
+        return c.json({ error: 'リクエストの処理に失敗しました。' }, 400);
+      }
     });
 }

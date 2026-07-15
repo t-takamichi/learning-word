@@ -79,9 +79,11 @@ export function useUsers() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: async (id: number) => {
+    mutationFn: async ({ id, pin }: { id: number; pin: string }) => {
       const res = await authedFetch(`/api/users/${id}`, {
         method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin }),
       });
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
@@ -89,9 +91,9 @@ export function useUsers() {
       }
       return res.json();
     },
-    onSuccess: (_, deletedId) => {
+    onSuccess: (_, { id }) => {
       // If deleted user was active, clear it
-      if (activeUserId === deletedId) {
+      if (activeUserId === id) {
         clearActiveUser();
       }
     },

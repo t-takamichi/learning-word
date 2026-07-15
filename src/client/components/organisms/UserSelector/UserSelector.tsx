@@ -6,7 +6,7 @@ interface Props {
   onLogin: (username: string, pin: string) => Promise<void>;
   onRegister: (username: string, pin: string) => Promise<void>;
   onLogout: () => void;
-  onDelete: (id: number) => void;
+  onDelete: (id: number, pin: string) => Promise<void>;
 }
 
 export function UserSelector({ activeUser, onLogin, onRegister, onLogout, onDelete }: Props): React.ReactElement {
@@ -18,6 +18,8 @@ export function UserSelector({ activeUser, onLogin, onRegister, onLogout, onDele
   
   // For confirmation before delete
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deletePin, setDeletePin] = useState('');
+  const [deleteError, setDeleteError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
@@ -89,18 +91,54 @@ export function UserSelector({ activeUser, onLogin, onRegister, onLogout, onDele
                   本当にアカウントを消しちゃう？<br />
                   これまでの学習履歴も全部消えちゃうよ😢
                 </p>
+                <div className={styles.formGroup} style={{ marginTop: '1rem', marginBottom: '1rem' }}>
+                  <label className={styles.label}>確認のため合言葉 (PIN) を入力してね🔑</label>
+                  <input 
+                    type="password" 
+                    className={styles.input} 
+                    placeholder="合言葉を入力してね🔑" 
+                    value={deletePin}
+                    onChange={(e) => {
+                      setDeletePin(e.target.value);
+                      if (deleteError) setDeleteError('');
+                    }}
+                  />
+                  {deleteError && <p className={styles.error} style={{ marginTop: '0.5rem' }}>{deleteError}</p>}
+                </div>
                 <div className={styles.deleteConfirmButtons}>
                   <button 
                     type="button" 
                     className={styles.dangerBtn}
-                    onClick={() => onDelete(activeUser.id)}
+                    onClick={async () => {
+                      const trimmedPin = deletePin.trim();
+                      if (!trimmedPin) {
+                        setDeleteError('合言葉を入力してね🔑');
+                        return;
+                      }
+                      try {
+                        await onDelete(activeUser.id, trimmedPin);
+                        setConfirmDelete(false);
+                        setDeletePin('');
+                        setDeleteError('');
+                      } catch (err) {
+                        if (err instanceof Error) {
+                          setDeleteError(err.message);
+                        } else {
+                          setDeleteError('合言葉がちがうみたい💦');
+                        }
+                      }
+                    }}
                   >
                     うん、おわかれする
                   </button>
                   <button 
                     type="button" 
                     className={styles.cancelBtn}
-                    onClick={() => setConfirmDelete(false)}
+                    onClick={() => {
+                      setConfirmDelete(false);
+                      setDeletePin('');
+                      setDeleteError('');
+                    }}
                   >
                     やっぱりやめる
                   </button>

@@ -407,3 +407,51 @@
   - `yarn build` 合格。
   - 自己修復リトライ回数: 0回。
 
+---
+
+## 実行ログ - 2026-07-16T01:13:00+09:00
+
+### 1. ユーザー指示
+* **インプット**: `/flow DELETE /api/users を本人確認必須にして`
+
+---
+
+### 2. STEP 1: 設計書の自動同期 (design-sync)
+* **更新ファイル**:
+  - [architecture.md](../design/architecture.md)
+  - [risks.md](../design/risks.md)
+* **変更内容**:
+  - `DELETE /api/users/:id` API の仕様に `{ pin }` (X-User-Token ヘッダー) を要求する本人確認（PIN検証）仕様を追記。
+  - セキュリティリスク R10 の対策に、削除時の PIN 入力による本人確認要件を追記。
+
+---
+
+### 3. STEP 2 & 3: 影響範囲・フェーズ定義更新および計画書マージ (phase-sync / plan-sync)
+* **影響フェーズ番号**: UX-8 (複数ユーザー & レベル選択)
+* **更新ファイル**:
+  - [phase-8.md](../impl/ux/phase-8.md)
+* **変更内容**:
+  - タスク `T-8.6` に「ユーザー削除時の本人確認（PIN検証）の導入」を追加。
+  - 受け入れ基準に「削除時に正しい合言葉（PIN）の入力がない場合は 401 エラーを返すこと」を追記。
+
+---
+
+### 4. STEP 4: 自動実装・検証・自己修復 (impl-sync)
+* **修正コード**:
+  - [users.ts (route)](../../../src/server/routes/users.ts)
+    - `DELETE /:id` エンドポイントにおいて、リクエストボディから `pin` を受け取り、`verifyPin` を用いて対象ユーザーの `pin_hash` と一致しているかを検証する処理を実装。不一致の場合は 401、未入力の場合は 400 を返却。
+    - ※ 後日補正: PIN不一致は authedFetch の 401→自動ログアウトと衝突するため `403 Forbidden` に変更（401 は「トークン認証失敗」に限定）。
+  - [useUsers.ts (hook)](../../../src/client/hooks/useUsers.ts)
+    - `deleteMutation` の引数を `{ id, pin }` に変更し、リクエストボディに JSON 形式で `pin` を含めて送信するよう修正。
+  - [UserSelectPage.tsx](../../../src/client/pages/UserSelectPage.tsx)
+    - `handleDelete` が `pin` を受け取り、`deleteUserAsync({ id, pin })` を呼び出すように修正。
+  - [UserSelector.tsx](../../../src/client/components/organisms/UserSelector/UserSelector.tsx)
+    - Props の `onDelete` を `(id: number, pin: string) => Promise<void>` に変更。
+    - アカウント削除の確認ボックス（`confirmDeleteBox`）内に、合言葉 (PIN) の入力フォームとエラー表示領域を新設。
+    - 「うん、おわかれする」ボタンクリック時に、入力された PIN を渡して `onDelete` を非同期で実行し、エラーが発生した場合は「合言葉がちがうみたい💦」等のエラーを表示するよう制御。
+
+* **検証結果**:
+  - `yarn typecheck` 合格。
+  - `yarn build` 合格。
+  - 自己修復リトライ回数: 0回。
+

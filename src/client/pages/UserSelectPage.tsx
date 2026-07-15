@@ -28,9 +28,9 @@ export function UserSelectPage(): React.ReactElement {
     clearActiveUser();
   };
 
-  const handleDelete = async (id: number): Promise<void> => {
+  const handleDelete = async (id: number, pin: string): Promise<void> => {
     sound.unlock();
-    await deleteUserAsync(id);
+    await deleteUserAsync({ id, pin });
     sound.play('again');
   };
 
