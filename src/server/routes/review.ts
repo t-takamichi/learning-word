@@ -4,7 +4,6 @@ import { z } from 'zod';
 import type { AppEnv } from '../index';
 
 const reviewSchema = z.object({
-  userId: z.number().int().positive(),
   wordId: z.number().int().positive(),
   result: z.enum(['good', 'again']),
 });
@@ -23,7 +22,12 @@ const routes = new Hono<AppEnv>().post(
     }
   }),
   (c) => {
-    const { userId, wordId, result } = c.req.valid('json');
+    const user = c.get('user');
+    if (!user) {
+      return c.json({ error: 'Unauthorized' }, 401);
+    }
+    const userId = user.id;
+    const { wordId, result } = c.req.valid('json');
     const useCase = c.get('submitReviewUseCase');
     useCase.execute({ userId, wordId, result });
     return c.json({ ok: true } as const);

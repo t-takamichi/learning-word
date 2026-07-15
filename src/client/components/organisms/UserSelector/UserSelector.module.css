@@ -1,41 +1,63 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  width: 100%;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 16px;
-  justify-content: center;
-}
-
-.emptyText {
-  text-align: center;
-  color: var(--ink-700);
-  font-weight: 700;
-  font-size: 16px;
-  margin: 16px 0;
-}
-
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  gap: 24px;
   width: 100%;
   max-width: 440px;
   margin: 0 auto;
 }
 
-.inputGroup {
+.tabHeader {
   display: flex;
+  background-color: var(--berry-50);
+  border-radius: var(--radius-btn);
+  padding: 4px;
+  gap: 4px;
+}
+
+.tabBtn {
+  flex: 1;
+  background: none;
+  border: none;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 10px 16px;
+  border-radius: calc(var(--radius-btn) - 2px);
+  cursor: pointer;
+  color: var(--ink-700);
+  transition: all 0.2s ease;
+}
+
+.tabActive {
+  background-color: var(--surface);
+  color: var(--berry-500);
+  box-shadow: var(--shadow-soft);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background-color: var(--surface);
+  padding: 24px;
+  border-radius: 20px;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--berry-100);
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
   gap: 8px;
 }
 
+.label {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--ink-800);
+}
+
 .input {
-  flex: 1;
   background-color: var(--surface);
   border: 2px solid var(--berry-200);
   border-radius: var(--radius-btn);
@@ -52,34 +74,195 @@
   box-shadow: 0 0 0 4px var(--berry-100);
 }
 
+.inputHint {
+  font-size: 12px;
+  color: var(--ink-600);
+  margin: 4px 0 0 0;
+}
+
 .submitBtn {
   background-color: var(--berry-500);
   color: var(--surface);
   border: none;
   font-weight: 700;
+  font-size: 16px;
   border-radius: var(--radius-btn);
-  padding: 12px 20px;
+  padding: 14px;
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-top: 8px;
+}
+
+.submitBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-pop);
+}
+
+.submitBtn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.submitBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.error {
+  color: var(--coral-500);
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  margin: 0;
+  animation: shake 0.3s ease;
+}
+
+.welcomeCard {
+  background-color: var(--surface);
+  padding: 32px 24px;
+  border-radius: 24px;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--berry-100);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.avatar {
+  font-size: 48px;
+  width: 80px;
+  height: 80px;
+  background-color: var(--berry-50);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.welcomeTitle {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--berry-500);
+  margin: 0;
+}
+
+.welcomeText {
+  color: var(--ink-700);
+  font-size: 15px;
+  margin: 0 0 8px 0;
+}
+
+.activeActions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.primaryBtn {
+  background-color: var(--berry-500);
+  color: var(--surface);
+  border: none;
+  font-weight: 700;
+  font-size: 16px;
+  border-radius: var(--radius-btn);
+  padding: 14px;
   cursor: pointer;
   box-shadow: var(--shadow-soft);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.submitBtn:hover {
+.primaryBtn:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-pop);
 }
 
-.submitBtn:active {
-  transform: translateY(1px);
+.secondaryBtn {
+  background-color: var(--surface);
+  color: var(--berry-500);
+  border: 2px solid var(--berry-200);
+  font-weight: 700;
+  font-size: 15px;
+  border-radius: var(--radius-btn);
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.error {
-  color: var(--coral-500);
+.secondaryBtn:hover {
+  background-color: var(--berry-50);
+  border-color: var(--berry-300);
+}
+
+.deleteSection {
+  margin-top: 16px;
+  width: 100%;
+  border-top: 1px dashed var(--berry-200);
+  padding-top: 16px;
+}
+
+.deleteBtn {
+  background: none;
+  border: none;
+  color: var(--ink-500);
   font-size: 13px;
   font-weight: 700;
-  text-align: center;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 8px;
+}
+
+.deleteBtn:hover {
+  color: var(--coral-500);
+}
+
+.confirmDeleteBox {
+  background-color: var(--coral-50);
+  border: 1px solid var(--coral-200);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.deleteWarning {
+  font-size: 13px;
+  color: var(--coral-700);
+  font-weight: 700;
   margin: 0;
-  animation: shake 0.3s ease;
+}
+
+.deleteConfirmButtons {
+  display: flex;
+  gap: 8px;
+}
+
+.dangerBtn {
+  flex: 1;
+  background-color: var(--coral-500);
+  color: var(--surface);
+  border: none;
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: var(--radius-btn);
+  padding: 10px;
+  cursor: pointer;
+}
+
+.cancelBtn {
+  flex: 1;
+  background-color: var(--surface);
+  color: var(--ink-700);
+  border: 1px solid var(--ink-300);
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: var(--radius-btn);
+  padding: 10px;
+  cursor: pointer;
 }
 
 @keyframes shake {

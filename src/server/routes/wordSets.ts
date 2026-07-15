@@ -1,16 +1,18 @@
 import { Hono } from 'hono';
 import { WordSetRepository } from '../repositories/wordSetRepository';
 import type { DB } from '../db';
+import type { AppEnv } from '../index';
 
 export function createWordSetsRoute(db: DB) {
   const repo = new WordSetRepository(db);
 
-  return new Hono()
+  return new Hono<AppEnv>()
     .get('/', (c) => {
-      const userId = Number(c.req.query('userId'));
-      if (isNaN(userId)) {
-        return c.json({ error: 'userId parameter is required' }, 400);
+      const user = c.get('user');
+      if (!user) {
+        return c.json({ error: 'Unauthorized' }, 401);
       }
+      const userId = user.id;
       const sets = repo.getWordSetsForUser(userId);
       return c.json(sets);
     });

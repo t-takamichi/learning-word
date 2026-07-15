@@ -75,6 +75,13 @@ learning-word/
 
 ```mermaid
 erDiagram
+  users {
+    int     id              PK
+    text    username        "ユーザー名（必須・ユニーク）"
+    text    pin_hash        "PINのハッシュ（必須）"
+    text    token           "セッション用トークン（必須）"
+    datetime created_at
+  }
   words {
     int     id              PK
     text    english         "英単語（必須）"
@@ -94,6 +101,7 @@ erDiagram
     datetime last_reviewed_at
   }
 
+  users ||--o| learning_progress : "1対0..N"
   words ||--o| learning_progress : "1対0..1（未学習はレコードなし）"
   dictionary_words {
     int     id              PK
@@ -136,17 +144,34 @@ LIMIT 6;
 
 ## 4. API エンドポイント一覧
 
-| Method | Path | 認証 | 説明 | リクエスト | レスポンス |
+| Method | Path | 認証 | 説明 | リクエスト | レレスポンス |
 |--------|------|------|------|-----------|-----------|
-| GET | `/api/session` | なし | セッション用単語10件取得 | - | `Word[]` |
-| POST | `/api/review` | なし | 自己評価を記録 | `{ wordId, result: 'good'\|'again' }` | `{ ok: true }` |
-| GET | `/api/words` | なし | 単語リスト取得（ページネーション） | `?page=1&limit=10` | `{ words: Word[], total: number }` |
+| GET | `/api/session` | トークン | セッション用単語10件取得 | - (X-User-Token ヘッダー) | `Word[]` |
+| POST | `/api/review` | トークン | 自己評価を記録 | `{ wordId, result: 'good'\|'again' }` (X-User-Token ヘッダー) | `{ ok: true }` |
+| GET | `/api/words` | トークン | 単語リスト取得（ページネーション） | `?page=1&limit=10` (X-User-Token ヘッダー) | `{ words: Word[], total: number }` |
 | GET | `/api/words/:id` | なし | 単語1件取得 | - | `Word` |
+| POST | `/api/users` | なし | ユーザー登録（PIN設定） | `{ username, pin }` | `{ id, username, token }` |
+| POST | `/api/users/login` | なし | ユーザーログイン | `{ username, pin }` | `{ id, username, token }` |
+| DELETE | `/api/users/:id` | トークン | ユーザー削除（トークン必須・本人限定） | - (X-User-Token ヘッダー) | `{ success: true }` |
 | POST | `/api/admin/words` | Basic | 単語追加 | `WordInput` | `Word` |
 | PUT | `/api/admin/words/:id` | Basic | 単語更新 | `Partial<WordInput>` | `Word` |
 | DELETE | `/api/admin/words/:id` | Basic | 単語削除 | - | `{ ok: true }` |
 | GET | `/api/admin/dictionary/search` | Basic | 辞書から英単語を前方一致検索 | `?q=...` | `string[]` |
 | GET | `/api/admin/dictionary/lookup` | Basic | 特定の英単語の対訳と例文を取得 | `?english=...` | `DictionaryWord | null` |
+
+### ユーザー認証ミドルウェア (X-User-Token)
+
+セッション・自己評価・単語リスト・ユーザー削除の各APIは、共通の認証ミドルウェアを介して保護される。
+クライアントは `X-User-Token` ヘッダーにセッション用トークンを付与してリクエストを行う。
+サーバー側はトークンを検証し、紐づく `userId` を内部的に導出して処理を行う。リクエストパラメータとしての `userId` の受け取りは廃止され、他人のデータへの不正アクセスを完全に遮断する。
+
+### PINセキュリティ強化
+
+- PINハッシュ化には **PBKDF2-SHA512 (210,000イテレーション)** を使用する。
+- ログイン検証時のハッシュ比較には定数時間比較 (`crypto.timingSafeEqual`) を使用し、タイミング攻撃を防ぐ。
+- 同一IP（接続元IPを直接取得し偽装を防止）および同一ユーザー名（グローバル制限）に対するログイン失敗カウントに基づくレートリミット（ロックアウト）を導入し、総当たり攻撃および setInterval による定期クリーンアップによるメモリリークを防止する。
+- 登録重複時のエラーは汎用的な「このユーザー名は利用できません」とし、ユーザー名の存在有無を推測しにくくする（列挙攻撃対策）。
+- マイグレーション移行時に既存ユーザーは安全のためすべてクリア（削除）され、新規に再登録を促す。
 
 ### 共有型定義（shared/types.ts）
 

@@ -1,9 +1,5 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { hc } from 'hono/client';
+import { useMutation } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
-import type { AppType } from '../../server/index';
-
-const client = hc<AppType>('/');
 
 interface User {
   id: number;
@@ -11,60 +7,99 @@ interface User {
 }
 
 export function useUsers() {
-  const queryClient = useQueryClient();
   const [activeUserId, setActiveUserId] = useState<number | null>(null);
+  const [activeUsername, setActiveUsername] = useState<string | null>(null);
+  const [activeUserToken, setActiveUserToken] = useState<string | null>(null);
 
-  // Load active user ID from localStorage on mount
+  // Load active user ID, username and token from localStorage on mount
   useEffect(() => {
-    const saved = localStorage.getItem('active_user_id');
-    if (saved) {
-      setActiveUserId(Number(saved));
+    const savedId = localStorage.getItem('active_user_id');
+    const savedName = localStorage.getItem('active_username');
+    const savedToken = localStorage.getItem('active_user_token');
+    if (savedId) {
+      setActiveUserId(Number(savedId));
+    }
+    if (savedName) {
+      setActiveUsername(savedName);
+    }
+    if (savedToken) {
+      setActiveUserToken(savedToken);
     }
   }, []);
 
-  const selectUser = (id: number): void => {
-    setActiveUserId(id);
-    localStorage.setItem('active_user_id', String(id));
+  const selectUser = (user: { id: number; username: string; token: string }): void => {
+    setActiveUserId(user.id);
+    setActiveUsername(user.username);
+    setActiveUserToken(user.token);
+    localStorage.setItem('active_user_id', String(user.id));
+    localStorage.setItem('active_username', user.username);
+    localStorage.setItem('active_user_token', user.token);
     localStorage.removeItem('active_word_set_id'); // Reset selected level for the user change
   };
 
   const clearActiveUser = (): void => {
     setActiveUserId(null);
+    setActiveUsername(null);
+    setActiveUserToken(null);
     localStorage.removeItem('active_user_id');
+    localStorage.removeItem('active_username');
+    localStorage.removeItem('active_user_token');
+    localStorage.removeItem('active_word_set_id');
   };
 
-  // Queries
-  const { data: users = [], isLoading, error } = useQuery<User[]>({
-    queryKey: ['users'],
-    queryFn: async () => {
-      const res = await client.api.users.$get();
-      if (!res.ok) throw new Error('ユーザー情報の取得に失敗しました');
-      return res.json() as Promise<User[]>;
+  // Mutations
+  const registerMutation = useMutation({
+    mutationFn: async ({ username, pin }: { username: string; pin: string }) => {
+      const res = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, pin }),
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || 'ユーザーを登録できませんでした');
+      }
+      return res.json() as Promise<{ id: number; username: string; token: string }>;
+    },
+    onSuccess: (newUser) => {
+      selectUser(newUser);
     },
   });
 
-  // Mutations
-  const createMutation = useMutation({
-    mutationFn: async (username: string) => {
-      const res = await client.api.users.$post({ json: { username } });
-      if (!res.ok) throw new Error('ユーザーを登録できませんでした');
-      return res.json() as Promise<User>;
+  const loginMutation = useMutation({
+    mutationFn: async ({ username, pin }: { username: string; pin: string }) => {
+      const res = await fetch('/api/users/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, pin }),
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || 'ログインに失敗しました。ユーザー名またはPINを確認してください。');
+      }
+      return res.json() as Promise<{ id: number; username: string; token: string }>;
     },
-    onSuccess: (newUser) => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
-      // Automatically select the newly created user
-      selectUser(newUser.id);
+    onSuccess: (user) => {
+      selectUser(user);
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      const res = await client.api.users[':id'].$delete({ param: { id: String(id) } });
-      if (!res.ok) throw new Error('ユーザーを削除できませんでした');
+      const token = localStorage.getItem('active_user_token');
+      const res = await fetch(`/api/users/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'X-User-Token': token || '',
+        },
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || 'ユーザーを削除できませんでした');
+      }
       return res.json();
     },
     onSuccess: (_, deletedId) => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
       // If deleted user was active, clear it
       if (activeUserId === deletedId) {
         clearActiveUser();
@@ -72,17 +107,19 @@ export function useUsers() {
     },
   });
 
-  const activeUser = users.find(u => u.id === activeUserId) ?? null;
+  const activeUser = activeUserId && activeUsername ? { id: activeUserId, username: activeUsername } : null;
 
   return {
-    users,
     activeUser,
     activeUserId,
-    isLoading,
-    error: error instanceof Error ? error : null,
-    selectUser,
+    isLoading: registerMutation.isPending || loginMutation.isPending || deleteMutation.isPending,
+    error: registerMutation.error || loginMutation.error || deleteMutation.error,
     clearActiveUser,
-    createUser: createMutation.mutate,
+    register: registerMutation.mutate,
+    login: loginMutation.mutate,
     deleteUser: deleteMutation.mutate,
+    registerAsync: registerMutation.mutateAsync,
+    loginAsync: loginMutation.mutateAsync,
+    deleteUserAsync: deleteMutation.mutateAsync,
   };
 }

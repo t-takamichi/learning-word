@@ -34,10 +34,10 @@ export function useSession(userId: number | null, wordSetId: number | null): Ses
     queryKey: ['session', userId, wordSetId],
     queryFn: async (): Promise<WordWithNullProgress[]> => {
       if (userId === null || wordSetId === null) return [];
-      const res = await client.api.session.$get({
-        query: {
-          userId: String(userId),
-          wordSetId: String(wordSetId),
+      const token = localStorage.getItem('active_user_token');
+      const res = await fetch(`/api/session?wordSetId=${wordSetId}`, {
+        headers: {
+          'X-User-Token': token || '',
         },
       });
       if (!res.ok) throw new Error('セッションの取得に失敗しました');
@@ -48,8 +48,16 @@ export function useSession(userId: number | null, wordSetId: number | null): Ses
   });
 
   const mutation = useMutation({
-    mutationFn: async (input: ReviewInput) => {
-      const res = await client.api.review.$post({ json: input });
+    mutationFn: async (input: { wordId: number; result: ReviewInput['result'] }) => {
+      const token = localStorage.getItem('active_user_token');
+      const res = await fetch('/api/review', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-User-Token': token || '',
+        },
+        body: JSON.stringify(input),
+      });
       if (!res.ok) throw new Error('記録できませんでした');
       return res.json();
     },
@@ -88,7 +96,7 @@ export function useSession(userId: number | null, wordSetId: number | null): Ses
   const submitReview = useCallback((result: ReviewInput['result']): void => {
     const word = data?.[currentIndex];
     if (!word || userId === null) return;
-    mutation.mutate({ userId, wordId: word.id, result });
+    mutation.mutate({ wordId: word.id, result });
   }, [data, currentIndex, mutation, userId]);
 
   const restart = useCallback((): void => {

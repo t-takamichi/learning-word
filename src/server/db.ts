@@ -2,6 +2,7 @@ import { DatabaseSync } from 'node:sqlite';
 import { readFileSync } from 'node:fs';
 import { mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
+import { randomBytes, pbkdf2Sync, randomUUID } from 'node:crypto';
 
 export type DB = DatabaseSync;
 
@@ -28,9 +29,36 @@ export function createDatabase(): DB {
   const db = new DatabaseSync(DB_PATH);
   const schema = readFileSync('storage/db/schema.sql', 'utf-8');
   db.exec(schema);
+  migrateColumns(db);
   seedIfEmpty(db);
   seedDictionaryIfEmpty(db);
   return db;
+}
+
+function migrateColumns(db: DB): void {
+  try {
+    const pragma = db.prepare('PRAGMA table_info(users)').all() as { name: string }[];
+    const columns = pragma.map((c) => c.name);
+    if (columns.length > 0) {
+      let migrated = false;
+      if (!columns.includes('pin_hash')) {
+        db.exec("ALTER TABLE users ADD COLUMN pin_hash TEXT NOT NULL DEFAULT 'invalid'");
+        migrated = true;
+      }
+      if (!columns.includes('token')) {
+        db.exec("ALTER TABLE users ADD COLUMN token TEXT NOT NULL DEFAULT 'invalid_token'");
+        migrated = true;
+      }
+
+      if (migrated) {
+        // 安全に全員再登録してもらうため、移行対象の古いユーザーレコードをすべて削除（クリア）する
+        db.exec('DELETE FROM users');
+        db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_users_token ON users(token)');
+      }
+    }
+  } catch (e) {
+    console.error('Failed to migrate users table columns:', e);
+  }
 }
 
 function seedIfEmpty(db: DB): void {

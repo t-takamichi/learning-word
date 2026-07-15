@@ -44,9 +44,10 @@ export function useWordSets(userId: number | null) {
     queryKey: ['word-sets', userId],
     queryFn: async () => {
       if (userId === null) return [];
-      const res = await client.api['word-sets'].$get({
-        query: {
-          userId: String(userId),
+      const token = localStorage.getItem('active_user_token');
+      const res = await fetch('/api/word-sets', {
+        headers: {
+          'X-User-Token': token || '',
         },
       });
       if (!res.ok) throw new Error('単語セットの取得に失敗しました');

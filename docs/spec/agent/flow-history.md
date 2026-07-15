@@ -235,3 +235,175 @@
   - `yarn build` 合格。
   - 自己修復リトライ回数: 0回。
 
+---
+
+## 実行ログ - 2026-07-15T23:22:00+09:00
+
+### 1. ユーザー指示
+* **インプット**: セキュリティ脆弱性（全データ系ルートにおける認可欠損、PIN暗号強度不足、総当たり攻撃/ユーザー名列挙可能、マイグレーションの1234初期化問題、不要ダミーコードの残存）の指摘に対するセキュリティ強化対策。
+
+---
+
+### 2. STEP 1: 設計書の自動同期 (design-sync)
+* **更新ファイル**:
+  - [architecture.md](../design/architecture.md)
+* **変更内容**:
+  - `session`, `review`, `words`, `word-sets` ルートにおいて、リクエストパラメータからの `userId` の受け取りを廃止し、`X-User-Token` 認証ミドルウェアから内部的に解決する仕様を追記。
+  - PBKDF2 の暗号強度 (210,000イテレーション)、定数時間比較 (`crypto.timingSafeEqual`)、IP + Username レートリミット、重複ユーザー名エラーの隠蔽、マイグレーション時の既存ユーザー無効化について明記。
+
+---
+
+### 3. STEP 2 & 3: 影響範囲・フェーズ定義更新および計画書マージ (phase-sync / plan-sync)
+* **影響フェーズ番号**: UX-8 (複数ユーザー & レベル選択)
+* **更新ファイル**:
+  - [phase-8.md](../impl/ux/phase-8.md)
+* **変更内容**:
+  - タスク `T-8.6` に「共通の認証ミドルウェアの導入」「データ系ルートのトークン認可保護」「PBKDF2暗号強度向上＆タイミング攻撃/総当たり/列挙対策」「マイグレーションの無効化処理」「useUsersのダミー掃除」を追加。
+
+---
+
+### 4. STEP 4: 自動実装・検証・自己修復 (impl-sync)
+* **修正・追加コード**:
+  - [auth.ts (middleware)](../../../src/server/middleware/auth.ts)
+    - 新設。ヘッダーの `X-User-Token` から `UserRepository` を通じてユーザーを特定し、コンテキスト `c.set('user', user)` にバインドする共通の認証ミドルウェアを実装。
+  - [db.ts](../../../src/server/db.ts)
+    - カラム追加時の `NOT NULL` デフォルト値を設定。既存ユーザーのマイグレーション処理において、"1234" ではなくランダムな32バイトデータから再現不可能な210,000回イテレーションハッシュを生成・保存し、既存アカウントを安全に無効化（無効PINで移行）するように修正。
+  - [userRepository.ts](../../../src/server/repositories/userRepository.ts)
+    - トークンから直接ユーザーを引く `findByToken(token)` メソッドを追加。
+  - [index.ts](../../../src/server/index.ts)
+    - `AppEnv` の context 型に `user` プロパティを追加。
+    - `authMiddleware` を `/api/session`, `/api/review`, `/api/words`, `/api/word-sets` に対して適用。
+  - [users.ts (route)](../../../src/server/routes/users.ts)
+    - PIN のハッシュイテレーション数を **210,000回** に強化。
+    - `verifyPin` 内で `crypto.timingSafeEqual` による定数時間比較を導入し、タイミング攻撃を防止。
+    - ログイン (`POST /login`) において、同一IP・同一Usernameに対するインメモリの試行カウントによるレートリミット（5回失敗で15分ロックアウト）を実装。
+    - ユーザー登録 (`POST /`) の名前重複エラーメッセージを汎用的なものに変更し、ユーザー名の存在有無を推測しにくくする（列挙攻撃対策）。
+    - 削除 (`DELETE /:id`) において、IDパラメータと認証済みトークンのユーザーIDが一致することを確認し、本人のみ削除可能に制限。
+  - [session.ts (route)](../../../src/server/routes/session.ts) / [review.ts (route)](../../../src/server/routes/review.ts) / [words.ts (route)](../../../src/server/routes/words.ts) / [wordSets.ts (route)](../../../src/server/routes/wordSets.ts)
+    - パラメータ `userId` の読み込みを廃止し、`c.get('user').id` から `userId` を決定するように変更（他人のデータへの不正アクセスを完全に遮断）。
+    - `reviewSchema` や `querySchema` からも `userId` バリデーションを排除。
+  - [useUsers.ts (hook)](../../../src/client/hooks/useUsers.ts)
+    - 不要なダミー関数 `users: []`, `selectUser`, `createUser` を完全に削除・クリーンアップ。
+  - [useSession.ts (hook)](../../../src/client/hooks/useSession.ts) / [useWords.ts (hook)](../../../src/client/hooks/useWords.ts) / [useWordSets.ts (hook)](../../../src/client/hooks/useWordSets.ts)
+    - リクエスト時の `userId` パラメータ送信を削除し、ヘッダーに `X-User-Token` を自動的に付与して送信するように fetch 処理を変更。
+
+* **検証結果**:
+  - `yarn typecheck` 合格。
+  - `yarn build` 合格。
+  - 自己修復リトライ回数: 0回。
+
+---
+
+## 実行ログ - 2026-07-15T23:27:00+09:00
+
+### 1. ユーザー指示
+* **インプット**: 既存ユーザー移行に関する判断。「既存ユーザーの影響なんぞ考えなくて良い」（＝古いユーザーレコードを無効化する代わりに、マイグレーション時にクリア（削除）する方式を採用する）。
+
+---
+
+### 2. STEP 1: 設計書の自動同期 (design-sync)
+* **更新ファイル**:
+  - [architecture.md](../design/architecture.md)
+* **変更内容**:
+  - マイグレーション移行時の挙動について、既存の古いユーザーは無効化ではなく「すべてクリア（物理削除）」とし、新規に再登録を促す仕様に修正。
+
+---
+
+### 3. STEP 2 & 3: 影響範囲・フェーズ定義更新および計画書マージ (phase-sync / plan-sync)
+* **影響フェーズ番号**: UX-8 (複数ユーザー & レベル選択)
+* **更新ファイル**:
+  - [phase-8.md](../impl/ux/phase-8.md)
+* **変更内容**:
+  - マイグレーションタスク of 記述を「既存のユーザーデータをクリア（物理削除）し、新規に再登録を促す」内容に更新。
+
+---
+
+### 4. STEP 4: 自動実装・検証・自己修復 (impl-sync)
+* **修正コード**:
+  - [db.ts](../../../src/server/db.ts)
+    - `migrateColumns` において、`migrated` が `true` の場合、以前のランダムハッシュによる無効化処理の代わりに、`db.exec('DELETE FROM users')` を実行し、既存ユーザーレコードを完全に物理削除（クリア）するように変更。
+    - これにより、ON DELETE CASCADE 制約を通して古いユーザーに関連する学習データも一括クリアされ、アカウント名重複による再登録不能問題が完全に解決。
+
+* **検証結果**:
+  - `yarn typecheck` 合格。
+  - `yarn build` 合格。
+  - 自己修復リトライ回数: 0回。
+
+---
+
+## 実行ログ - 2026-07-15T23:30:00+09:00
+
+### 1. ユーザー指示
+* **インプット**: レート制限を IP と併用して Username 単位のグローバル計数へ変更し、ヘッダー偽装（XFF）を回避できるようにする。信頼できるプロキシ背後でない限り XFF を識別に使用しない。
+
+---
+
+### 2. STEP 1: 設計書の自動同期 (design-sync)
+* **更新ファイル**:
+  - [architecture.md](../design/architecture.md)
+* **変更内容**:
+  - ログイン制限仕様に、偽装不可能な接続元IP（connInfo）およびユーザー名単位（グローバル）の失敗カウントに基づくレートリミット（ロックアウト）を追加。メモリリーク防止のためのガベージコレクションについて追記。
+
+---
+
+### 3. STEP 2 & 3: 影響範囲・フェーズ定義更新および計画書マージ (phase-sync / plan-sync)
+* **影響フェーズ番号**: UX-8 (複数ユーザー & レベル選択)
+* **更新ファイル**:
+  - [phase-8.md](../impl/ux/phase-8.md)
+* **変更内容**:
+  - レートリミット強化タスクの説明を「接続元IPおよびユーザー名単位の失敗カウントに基づくレートリミット」に更新。
+
+---
+
+### 4. STEP 4: 自動実装・検証・自己修復 (impl-sync)
+* **修正コード**:
+  - [users.ts (route)](../../../src/server/routes/users.ts)
+    - `@hono/node-server/conninfo` から `getConnInfo` ヘルパーをインポートするように変更（X-Forwarded-For 偽装の無効化）。
+    - ログイン試行制限データを `ipAttempts` と `usernameAttempts` の2つの Map で管理するようリファクタリング。
+    - 30分間隔で 15分以上前の古い失敗データを Map から自動削除するガベージコレクション処理 `gcAttempts` を実装（メモリリーク対策）。
+    - レートリミット制限のチェック処理 `checkLockout` を追加。IP 単位またはユーザー名単位で失敗が上限（5回）に達している場合、15分間ブロック。
+    - 認証の成功/失敗時にのみカウントを更新・リセットするようにロジックを高信頼化。認証失敗時に `recordFailure` でカウントを増やし、成功時に `resetAttempts` でクリア。
+
+* **検証結果**:
+  - `yarn typecheck` 合格。
+  - `yarn build` 合格。
+  - 自己修復リトライ回数: 0回。
+
+---
+
+## 実行ログ - 2026-07-15T23:32:00+09:00
+
+### 1. ユーザー指示
+* **インプット**: Map の掃除。LOCKOUT_TIME 経過した古いエントリを、アクセス時ではなく定期的な `setInterval` でバックグラウンドから完全に自動削除し、メモリの無制限な増加を防ぐ。
+
+---
+
+### 2. STEP 1: 設計書の自動同期 (design-sync)
+* **更新ファイル**:
+  - [architecture.md](../design/architecture.md)
+* **変更内容**:
+  - レートリミット制限データのメモリリーク防止対策を、「setInterval による定期的な自動クリーンアップ」へと仕様更新。
+
+---
+
+### 3. STEP 2 & 3: 影響範囲・フェーズ定義更新および計画書マージ (phase-sync / plan-sync)
+* **影響フェーズ番号**: UX-8 (複数ユーザー & レベル選択)
+* **更新ファイル**:
+  - [phase-8.md](../impl/ux/phase-8.md)
+* **変更内容**:
+  - メモリリーク防止対策として「setInterval による定期クリーンアップ」を実装計画書に明記。
+
+---
+
+### 4. STEP 4: 自動実装・検証・自己修復 (impl-sync)
+* **修正コード**:
+  - [users.ts (route)](../../../src/server/routes/users.ts)
+    - アクセス時の GC 処理（`gcAttempts`）を廃止。
+    - 代わりに、バックグラウンドで15分間隔で自動起動する `setInterval` タイマーを設置し、LOCKOUT_TIME を超過した古い失敗試行データを Map から自動削除（クリーンアップ）する処理に置き換え。
+    - `gcTimer.unref()` を安全に（unref 関数の存在チェック付きで）記述し、タイマーが Node.js プロセスの正常な終了・シャットダウンイベントループを妨害しないように配慮。
+
+* **検証結果**:
+  - `yarn typecheck` 合格。
+  - `yarn build` 合格。
+  - 自己修復リトライ回数: 0回。
+

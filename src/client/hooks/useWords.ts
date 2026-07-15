@@ -26,12 +26,10 @@ export function useWords({ userId, wordSetId, page = 1, limit = 10 }: UseWordsOp
       if (userId === null || wordSetId === null) {
         return { words: [], total: 0, page, limit, totalPages: 0 };
       }
-      const res = await client.api.words.$get({
-        query: {
-          userId: String(userId),
-          wordSetId: String(wordSetId),
-          page: String(page),
-          limit: String(limit),
+      const token = localStorage.getItem('active_user_token');
+      const res = await fetch(`/api/words?wordSetId=${wordSetId}&page=${page}&limit=${limit}`, {
+        headers: {
+          'X-User-Token': token || '',
         },
       });
       if (!res.ok) throw new Error('単語リストの取得に失敗しました');

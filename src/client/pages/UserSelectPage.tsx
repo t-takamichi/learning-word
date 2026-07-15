@@ -6,44 +6,42 @@ import { useSound } from '../hooks/useSound';
 import { navigateTo } from '../lib/navigation';
 
 export function UserSelectPage(): React.ReactElement {
-  const { users, activeUserId, selectUser, deleteUser, createUser } = useUsers();
+  const { activeUser, registerAsync, loginAsync, deleteUserAsync, clearActiveUser } = useUsers();
   const sound = useSound();
 
-  const handleSelect = (id: number): void => {
-    sound.unlock(); // Ensure AudioContext is unlocked on user gesture
-    selectUser(id);
-    
-    // Play delightful welcome sound
+  const handleLogin = async (username: string, pin: string): Promise<void> => {
+    sound.unlock();
+    await loginAsync({ username, pin });
     sound.play('combo');
-    
-    // Navigate to level select page
     navigateTo('/levels');
   };
 
-  const handleDelete = (id: number): void => {
+  const handleRegister = async (username: string, pin: string): Promise<void> => {
     sound.unlock();
-    deleteUser(id);
-    sound.play('again');
+    await registerAsync({ username, pin });
+    sound.play('combo');
+    navigateTo('/levels');
   };
 
-  const handleCreate = (username: string): void => {
+  const handleLogout = (): void => {
     sound.unlock();
-    createUser(username, {
-      onSuccess: () => {
-        sound.play('combo');
-        navigateTo('/levels');
-      }
-    });
+    clearActiveUser();
+  };
+
+  const handleDelete = async (id: number): Promise<void> => {
+    sound.unlock();
+    await deleteUserAsync(id);
+    sound.play('again');
   };
 
   return (
     <UserSelectTemplate>
       <UserSelector 
-        users={users} 
-        activeUserId={activeUserId} 
-        onSelect={handleSelect} 
-        onDelete={handleDelete} 
-        onCreate={handleCreate} 
+        activeUser={activeUser}
+        onLogin={handleLogin} 
+        onRegister={handleRegister} 
+        onLogout={handleLogout}
+        onDelete={handleDelete}
       />
     </UserSelectTemplate>
   );

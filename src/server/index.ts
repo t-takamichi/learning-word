@@ -23,7 +23,7 @@ import { ttsRoutes } from './routes/tts';
 import { ensurePiperReady } from './services/ttsService';
 import { DictionaryRepository } from './repositories/dictionaryRepository';
 import { SearchDictionaryUseCase, LookupDictionaryUseCase } from './usecases/dictionary';
-
+import { authMiddleware } from './middleware/auth';
 
 export type AppEnv = {
   Variables: {
@@ -36,6 +36,7 @@ export type AppEnv = {
     deleteWordUseCase: DeleteWordUseCase;
     searchDictionaryUseCase: SearchDictionaryUseCase;
     lookupDictionaryUseCase: LookupDictionaryUseCase;
+    user?: { id: number; username: string };
   };
 };
 
@@ -71,6 +72,12 @@ app.onError((err, c) => {
   }
   return c.json({ success: false, message: 'Internal Server Error' }, 500);
 });
+
+const auth = authMiddleware(db);
+app.use('/api/session', auth);
+app.use('/api/review', auth);
+app.use('/api/words', auth);
+app.use('/api/word-sets', auth);
 
 app.use('/api/*', async (c, next) => {
   c.set('getSessionUseCase', getSessionUseCase);
