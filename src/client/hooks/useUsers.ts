@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
+import { authedFetch } from '../lib/authedFetch';
 
 interface User {
   id: number;
@@ -79,12 +80,8 @@ export function useUsers() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      const token = localStorage.getItem('active_user_token');
-      const res = await fetch(`/api/users/${id}`, {
+      const res = await authedFetch(`/api/users/${id}`, {
         method: 'DELETE',
-        headers: {
-          'X-User-Token': token || '',
-        },
       });
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));

@@ -1,9 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { hc } from 'hono/client';
 import { useState } from 'react';
-import type { AppType } from '../../server/index';
-
-const client = hc<AppType>('/');
+import { authedFetch } from '../lib/authedFetch';
 
 interface WordSetProgress {
   total: number;
@@ -42,12 +39,7 @@ export function useWordSets(userId: number | null) {
     queryKey: ['word-sets', userId],
     queryFn: async () => {
       if (userId === null) return [];
-      const token = localStorage.getItem('active_user_token');
-      const res = await fetch('/api/word-sets', {
-        headers: {
-          'X-User-Token': token || '',
-        },
-      });
+      const res = await authedFetch('/api/word-sets');
       if (!res.ok) throw new Error('単語セットの取得に失敗しました');
       return res.json() as Promise<WordSet[]>;
     },

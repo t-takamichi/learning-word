@@ -1,9 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { hc } from 'hono/client';
-import type { AppType } from '../../server/index';
 import type { WordsResponse } from '@shared/types';
-
-const client = hc<AppType>('/');
+import { authedFetch } from '../lib/authedFetch';
 
 interface UseWordsOptions {
   readonly userId: number | null;
@@ -26,12 +23,7 @@ export function useWords({ userId, wordSetId, page = 1, limit = 10 }: UseWordsOp
       if (userId === null || wordSetId === null) {
         return { words: [], total: 0, page, limit, totalPages: 0 };
       }
-      const token = localStorage.getItem('active_user_token');
-      const res = await fetch(`/api/words?wordSetId=${wordSetId}&page=${page}&limit=${limit}`, {
-        headers: {
-          'X-User-Token': token || '',
-        },
-      });
+      const res = await authedFetch(`/api/words?wordSetId=${wordSetId}&page=${page}&limit=${limit}`);
       if (!res.ok) throw new Error('単語リストの取得に失敗しました');
       return res.json() as Promise<WordsResponse>;
     },

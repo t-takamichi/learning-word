@@ -1,10 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { hc } from 'hono/client';
 import { useState, useCallback } from 'react';
-import type { AppType } from '../../server/index';
 import type { Word, ReviewInput } from '@shared/types';
-
-const client = hc<AppType>('/');
+import { authedFetch } from '../lib/authedFetch';
 
 type WordWithNullProgress = Word & { readonly progress: null };
 
@@ -34,12 +31,7 @@ export function useSession(userId: number | null, wordSetId: number | null): Ses
     queryKey: ['session', userId, wordSetId],
     queryFn: async (): Promise<WordWithNullProgress[]> => {
       if (userId === null || wordSetId === null) return [];
-      const token = localStorage.getItem('active_user_token');
-      const res = await fetch(`/api/session?wordSetId=${wordSetId}`, {
-        headers: {
-          'X-User-Token': token || '',
-        },
-      });
+      const res = await authedFetch(`/api/session?wordSetId=${wordSetId}`);
       if (!res.ok) throw new Error('セッションの取得に失敗しました');
       const words = await res.json() as Word[];
       return words.map((w) => ({ ...w, progress: null }));
@@ -49,12 +41,10 @@ export function useSession(userId: number | null, wordSetId: number | null): Ses
 
   const mutation = useMutation({
     mutationFn: async (input: { wordId: number; result: ReviewInput['result'] }) => {
-      const token = localStorage.getItem('active_user_token');
-      const res = await fetch('/api/review', {
+      const res = await authedFetch('/api/review', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-User-Token': token || '',
         },
         body: JSON.stringify(input),
       });
