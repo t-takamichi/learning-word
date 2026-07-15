@@ -104,8 +104,34 @@ const routes = app
   .route('/api/users', createUsersRoute(db))
   .route('/api/word-sets', createWordSetsRoute(db));
 
+// Content-hashed build assets: URL changes on every content change, so cache
+// them permanently. Old clients that hold a stale bundle simply request the new
+// hashed URL after index.html updates.
+app.use(
+  '/assets/*',
+  serveStatic({
+    root: './dist/client',
+    onFound: (_path, c) => {
+      c.header('Cache-Control', 'public, max-age=31536000, immutable');
+    },
+  })
+);
+
+// Other static files (favicon, etc.).
 app.use('/*', serveStatic({ root: './dist/client' }));
-app.get('/*', serveStatic({ path: './dist/client/index.html' }));
+
+// SPA entry point. index.html is the only file with a stable URL, so it must be
+// revalidated on every load — otherwise a cached copy keeps pointing at old,
+// possibly-removed asset hashes and the app breaks until a manual cache clear.
+app.get(
+  '/*',
+  serveStatic({
+    path: './dist/client/index.html',
+    onFound: (_path, c) => {
+      c.header('Cache-Control', 'no-cache');
+    },
+  })
+);
 
 export type AppType = typeof routes;
 
