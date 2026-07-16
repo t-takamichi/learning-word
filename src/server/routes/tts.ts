@@ -9,11 +9,22 @@ export const ttsRoutes = new Hono()
       return c.text('Missing text parameter', 400);
     }
 
+    // クライアントの再生速度指定(rate)を、ピッチを保った発音長(length_scale)へ変換する。
+    // rate<1（ゆっくり）→ length_scale>1。異常値を避けるため 0.5〜2.0 にクランプ。
+    const rateParam = c.req.query('rate');
+    let lengthScale = 1.0;
+    if (rateParam) {
+      const rate = parseFloat(rateParam);
+      if (!isNaN(rate) && rate > 0) {
+        lengthScale = Math.min(2.0, Math.max(0.5, 1 / rate));
+      }
+    }
+
     try {
       // Ensure Piper is downloaded and ready (idempotent check)
       await ensurePiperReady();
 
-      const audioStream = await generateSpeechStream(text);
+      const audioStream = await generateSpeechStream(text, lengthScale);
 
       c.header('Content-Type', 'audio/wav');
       c.header('Transfer-Encoding', 'chunked');

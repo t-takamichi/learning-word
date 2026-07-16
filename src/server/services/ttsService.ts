@@ -24,6 +24,7 @@ let usePythonFallback = false;
 
 interface TTSJob {
   text: string;
+  lengthScale: number;
   resolve: (stream: Readable) => void;
   reject: (err: any) => void;
 }
@@ -112,7 +113,7 @@ function processQueue() {
   console.log(`[TTS Queue] Starting Piper process. Active: ${activeProcesses}/${MAX_CONCURRENT_PROCESSES}, Queue: ${ttsQueue.length}`);
 
   try {
-    const stream = startPiperProcess(job.text);
+    const stream = startPiperProcess(job.text, job.lengthScale);
     job.resolve(stream);
   } catch (err) {
     activeProcesses = Math.max(0, activeProcesses - 1);
@@ -129,21 +130,26 @@ function processQueue() {
   }
 }
 
-function startPiperProcess(text: string): Readable {
+function startPiperProcess(text: string, lengthScale: number): Readable {
   const sanitizedText = text.replace(/\n/g, ' ').trim();
+
+  // `--length_scale` は音素の長さを伸縮させる（>1 で発音が遅くなる）。再生速度を
+  // 落とすクライアント側の playbackRate と違い、ピッチを変えずにゆっくり読ませられる。
+  // アンダースコア表記は本番の旧C++バイナリと python 版の双方が受け付ける共通形式。
+  const lengthScaleArg = ['--length_scale', String(lengthScale)];
 
   let cmd: string;
   let args: string[];
 
   if (usePythonFallback) {
     cmd = 'python3';
-    args = ['-m', 'piper', '--model', PIPER_MODEL_PATH, '-f', '-'];
+    args = ['-m', 'piper', '--model', PIPER_MODEL_PATH, ...lengthScaleArg, '-f', '-'];
   } else {
     if (!fs.existsSync(PIPER_BIN_PATH)) {
       throw new Error(`Piper binary not found at ${PIPER_BIN_PATH}. Run ensurePiperReady() first.`);
     }
     cmd = PIPER_BIN_PATH;
-    args = ['-m', PIPER_MODEL_PATH, '-f', '-'];
+    args = ['-m', PIPER_MODEL_PATH, ...lengthScaleArg, '-f', '-'];
   }
 
   if (!fs.existsSync(PIPER_MODEL_PATH)) {
@@ -206,13 +212,13 @@ function startPiperProcess(text: string): Readable {
 /**
  * 指定したテキストの音声データをストリームとして生成する（キューで制御）
  */
-export function generateSpeechStream(text: string): Promise<Readable> {
+export function generateSpeechStream(text: string, lengthScale: number = 1.0): Promise<Readable> {
   if (ttsQueue.length >= MAX_QUEUE_SIZE) {
     return Promise.reject(new Error('TTS server is busy. Please try again later.'));
   }
 
   return new Promise<Readable>((resolve, reject) => {
-    ttsQueue.push({ text, resolve, reject });
+    ttsQueue.push({ text, lengthScale, resolve, reject });
     processQueue();
   });
 }

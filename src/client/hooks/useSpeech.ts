@@ -82,7 +82,11 @@ export function useSpeech(): UseSpeechReturn {
         ctx.resume().catch(() => {});
       }
 
-      fetch(`/api/tts?text=${encodeURIComponent(text)}`, { signal: controller.signal })
+      // Slow pronunciation is done server-side (Piper --length_scale) so the pitch
+      // is preserved. Passing rate to the server instead of using playbackRate below
+      // avoids the female voice sounding lower/male-ish when slowed down.
+      const rateParam = rate !== undefined && rate !== 1.0 ? `&rate=${rate}` : '';
+      fetch(`/api/tts?text=${encodeURIComponent(text)}${rateParam}`, { signal: controller.signal })
         .then((res) => {
           if (!res.ok) throw new Error(`TTS fetch failed: ${res.status}`);
           return res.arrayBuffer();
@@ -94,9 +98,10 @@ export function useSpeech(): UseSpeechReturn {
 
           const source = ctx.createBufferSource();
           source.buffer = audioBuffer;
-          // NOTE: Web Audio playbackRate shifts pitch (unlike HTMLAudio which
-          // preserves it). Acceptable for the slow-pronunciation rate (~0.8).
-          source.playbackRate.value = rate ?? 1.0;
+          // Always play at 1.0: Web Audio playbackRate would shift pitch (making a
+          // slowed female voice sound male). The slow-down is already baked into the
+          // fetched audio by the server (Piper --length_scale), which keeps pitch.
+          source.playbackRate.value = 1.0;
           source.connect(ctx.destination);
           source.onended = () => {
             if (myId !== requestIdRef.current) return;
