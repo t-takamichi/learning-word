@@ -16,7 +16,7 @@
 | Infrastructure | `repositories/userWordRepository.ts` 新設。`UPDATE`/`DELETE`のSQLに `WHERE id = ? AND created_by = ?` を含め、所有権チェックと更新/削除をアトミックに行う |
 | Application | `usecases/userWord.ts`（`CreateUserWordUseCase` / `UpdateUserWordUseCase` / `DeleteUserWordUseCase`）新設。既存 `usecases/adminWord.ts` と対になる構成 |
 | Presentation | `routes/words.ts` に `POST /` / `PUT /:id` / `DELETE /:id` ハンドラを追加。既存の `schemas/wordInput.ts`（`WordInputSchema` / `WordPartialInputSchema`）を再利用。`word_set_id` が自分から見えるセット（共有 or 自分専用）かを事前検証し、見えなければ400 |
-| Frontend | 単語追加フォーム（`WordList`画面またはStudyPage内）。単語一覧の各項目に、`created_by === activeUserId` の場合のみ編集(✏️)・削除(🗑)ボタンを表示するロジック |
+| Frontend | ・**単語追加/編集フォーム**: Berryテーマ（角丸`--radius-btn`、フォーカス枠線、iOSズーム防止のフォントサイズ16px、ぷっくりした`--berry-500`背景の送信ボタン）に完全準拠した入力フォームの実装<br>・**編集・削除ボタン**: 単語リストの各項目に `created_by === activeUserId` の場合のみ、丸みのある控えめなアイコンボタンを表示<br>・**やさしい削除確認モーダル (`ConfirmModal`)**: マスコットからの「この単語と、おわかれする？」という問いかけと、「やっぱりいっしょにいる！」「バイバイする」の感情配慮ボタン<br>・**成功時のやさしいトースト**: 登録・編集成功時にマスコット🍓付きのやさしい応援トーストを表示 |
 
 ## スコープ外（このフェーズでやらないこと）
 - 自分専用の単語セットの作成・編集・削除（Phase 8）

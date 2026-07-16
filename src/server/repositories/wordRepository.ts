@@ -19,10 +19,10 @@ export class WordRepository implements IWordRepository {
     const priority = this.db.prepare(`
       SELECT w.* FROM words w
       LEFT JOIN learning_progress p ON w.id = p.word_id AND p.user_id = ?
-      WHERE w.word_set_id = ? AND (p.word_id IS NULL OR p.status = 'weak' OR p.incorrect_count > 0)
+      WHERE w.word_set_id = ? AND (w.created_by IS NULL OR w.created_by = ?) AND (p.word_id IS NULL OR p.status = 'weak' OR p.incorrect_count > 0)
       ORDER BY COALESCE(p.incorrect_count, 999) DESC, RANDOM()
       LIMIT 4
-    `).all(userId, wordSetId) as Word[];
+    `).all(userId, wordSetId, userId) as Word[];
 
     const priorityIds = priority.map((w) => w.id);
     const placeholders = priorityIds.length > 0
@@ -32,10 +32,10 @@ export class WordRepository implements IWordRepository {
     // 通常枠 6件: 優先枠を除く (特定の単語セットに限定)
     const normal = this.db.prepare(`
       SELECT w.* FROM words w
-      WHERE w.word_set_id = ? AND w.id NOT IN (${placeholders})
+      WHERE w.word_set_id = ? AND (w.created_by IS NULL OR w.created_by = ?) AND w.id NOT IN (${placeholders})
       ORDER BY RANDOM()
       LIMIT 6
-    `).all(wordSetId, ...priorityIds) as Word[];
+    `).all(wordSetId, userId, ...priorityIds) as Word[];
 
     return [...priority, ...normal];
   }
@@ -52,14 +52,14 @@ export class WordRepository implements IWordRepository {
         p.last_reviewed_at
       FROM words w
       LEFT JOIN learning_progress p ON w.id = p.word_id AND p.user_id = ?
-      WHERE w.word_set_id = ?
+      WHERE w.word_set_id = ? AND (w.created_by IS NULL OR w.created_by = ?)
       ORDER BY w.id ASC
       LIMIT ? OFFSET ?
-    `).all(userId, wordSetId, limit, offset) as WordRow[];
+    `).all(userId, wordSetId, userId, limit, offset) as WordRow[];
 
     const countRow = this.db.prepare(
-      'SELECT COUNT(*) AS total FROM words WHERE word_set_id = ?'
-    ).get(wordSetId) as CountRow | undefined;
+      'SELECT COUNT(*) AS total FROM words WHERE word_set_id = ? AND (created_by IS NULL OR created_by = ?)'
+    ).get(wordSetId, userId) as CountRow | undefined;
 
     const total = countRow?.total ?? 0;
 
@@ -72,6 +72,7 @@ export class WordRepository implements IWordRepository {
       example_en: row.example_en,
       example_vi: row.example_vi,
       example_ja: row.example_ja,
+      created_by: row.created_by,
       created_at: row.created_at,
       progress: {
         word_id: row.id,

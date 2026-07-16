@@ -11,15 +11,19 @@ interface WordSet {
   name: string;
   levelTag: 'basic' | 'intermediate' | 'advanced';
   description: string | null;
+  createdBy: number | null;
   progress: WordSetProgress;
 }
 
 interface Props {
   wordSet: WordSet;
   onSelect: (id: number) => void;
+  activeUserId?: number | null;
+  onEdit?: (wordSet: WordSet) => void;
+  onDelete?: (id: number) => void;
 }
 
-export function WordSetCard({ wordSet, onSelect }: Props): React.ReactElement {
+export function WordSetCard({ wordSet, onSelect, activeUserId, onEdit, onDelete }: Props): React.ReactElement {
   const { total, mastered } = wordSet.progress;
   const progressPercent = total > 0 ? Math.round((mastered / total) * 100) : 0;
   const isCompleted = progressPercent === 100;
@@ -43,10 +47,37 @@ export function WordSetCard({ wordSet, onSelect }: Props): React.ReactElement {
       <div className={styles.header}>
         <span className={styles.emoji}>{getLevelEmoji(wordSet.levelTag)}</span>
         <div className={styles.titleArea}>
-          <h3 className={styles.title}>{wordSet.name}</h3>
+          <div className={styles.titleRow}>
+            <h3 className={styles.title}>{wordSet.name}</h3>
+            {wordSet.createdBy !== null && (
+              <span className={styles.privateBadge}>自分専用</span>
+            )}
+          </div>
           {wordSet.description && <p className={styles.desc}>{wordSet.description}</p>}
         </div>
-        {isCompleted && <span className={styles.crown} aria-label="制覇！">👑</span>}
+        
+        {wordSet.createdBy !== null && wordSet.createdBy === activeUserId && (
+          <div className={styles.actions} onClick={(e) => e.stopPropagation()}>
+            <button 
+              className={styles.actionBtn} 
+              onClick={() => onEdit?.(wordSet)}
+              aria-label="編集"
+            >
+              ✏️
+            </button>
+            <button 
+              className={`${styles.actionBtn} ${styles.deleteBtn}`} 
+              onClick={() => onDelete?.(wordSet.id)}
+              aria-label="削除"
+            >
+              🗑
+            </button>
+          </div>
+        )}
+
+        {isCompleted && !(wordSet.createdBy !== null && wordSet.createdBy === activeUserId) && (
+          <span className={styles.crown} aria-label="制覇！">👑</span>
+        )}
       </div>
 
       <div className={styles.progressSection}>

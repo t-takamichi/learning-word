@@ -7,9 +7,11 @@ import styles from './WordListItem.module.css';
 interface Props {
   word: WordWithProgress;
   userId: number | null;
+  onEdit?: (word: WordWithProgress) => void;
+  onDelete?: (id: number) => void;
 }
 
-export const WordListItem = ({ word, userId }: Props): React.ReactElement => {
+export const WordListItem = ({ word, userId, onEdit, onDelete }: Props): React.ReactElement => {
   const [note, setNote] = useState('');
   const [isSaved, setIsSaved] = useState(false);
 
@@ -70,7 +72,27 @@ export const WordListItem = ({ word, userId }: Props): React.ReactElement => {
             {statusTextMap[status]}
           </span>
         </div>
-        <AudioButton word={word.english} size="sm" />
+        <div className={styles.actions}>
+          <AudioButton word={word.english} size="sm" />
+          {word.created_by !== null && word.created_by === userId && (
+            <>
+              <button 
+                className={styles.actionBtn} 
+                onClick={() => onEdit?.(word)}
+                aria-label="単語の編集"
+              >
+                ✏️
+              </button>
+              <button 
+                className={`${styles.actionBtn} ${styles.deleteBtn}`} 
+                onClick={() => onDelete?.(word.id)}
+                aria-label="単語の削除"
+              >
+                🗑
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
       <div className={styles.translations}>

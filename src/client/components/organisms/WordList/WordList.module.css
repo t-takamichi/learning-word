@@ -92,3 +92,244 @@
     background-color: var(--berry-500);
   }
 }
+
+.listHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 2px solid var(--berry-100);
+  padding-bottom: 8px;
+}
+
+.title {
+  color: var(--ink-900);
+  margin: 0;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.createBtn {
+  background-color: var(--berry-500);
+  color: var(--surface);
+  border: none;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 8px 14px;
+  border-radius: var(--radius-btn);
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.createBtn:hover {
+  background-color: var(--berry-400);
+  box-shadow: var(--shadow-pop);
+}
+
+.createBtn:active {
+  transform: translateY(1px);
+}
+
+/* モーダル */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(74, 44, 58, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: fadeInModal 0.2s ease-out;
+}
+
+.modalContent {
+  background-color: var(--surface);
+  border-radius: var(--radius-card);
+  padding: 28px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: var(--shadow-pop);
+  animation: slideInModal 0.2s ease-out;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modalTitle {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink-900);
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-900);
+}
+
+.input,
+.textarea {
+  border: 2px solid rgba(255, 111, 165, 0.18);
+  border-radius: var(--radius-btn);
+  padding: 10px 14px;
+  font-size: 16px;
+  color: var(--ink-700);
+  background-color: var(--surface);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+}
+
+.input:focus,
+.textarea:focus {
+  border-color: var(--berry-500);
+  box-shadow: var(--shadow-soft);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.errorText {
+  color: #E5484D;
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.confirmText {
+  color: var(--ink-700);
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.5;
+  margin: 0 0 20px 0;
+}
+
+.warningText {
+  color: var(--coral-500);
+  font-size: 13px;
+}
+
+.modalActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.cancelBtn {
+  flex: 1;
+  background-color: var(--berry-50);
+  color: var(--ink-700);
+  border: none;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 12px;
+  border-radius: var(--radius-btn);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.cancelBtn:hover {
+  background-color: var(--berry-100);
+}
+
+.submitBtn {
+  flex: 1;
+  background-color: var(--berry-500);
+  color: var(--surface);
+  border: none;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 12px;
+  border-radius: var(--radius-btn);
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.submitBtn:hover {
+  background-color: var(--berry-400);
+  box-shadow: var(--shadow-pop);
+}
+
+.submitBtn:active {
+  transform: translateY(1px);
+}
+
+.deleteConfirmBtn {
+  background-color: var(--coral-500);
+}
+
+.deleteConfirmBtn:hover {
+  background-color: var(--coral-500);
+  opacity: 0.9;
+}
+
+/* サジェストリスト (オートコンプリート) */
+.suggestionsList {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-pop);
+  z-index: 10;
+  margin-top: 4px;
+  padding: 8px 0;
+  list-style: none;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid rgba(255, 111, 165, 0.1);
+}
+
+.suggestionItem {
+  padding: 10px 16px;
+  cursor: pointer;
+  color: var(--ink-700);
+  font-size: 14px;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.suggestionItem:hover {
+  background-color: var(--berry-100);
+  color: var(--ink-900);
+}
+
+.searchingText {
+  padding: 10px 16px;
+  color: var(--ink-400);
+  font-size: 13px;
+  font-style: italic;
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInModal {
+  from { transform: translateY(20px) scale(0.95); }
+  to { transform: translateY(0) scale(1); }
+}

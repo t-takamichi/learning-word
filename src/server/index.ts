@@ -24,6 +24,10 @@ import { ensurePiperReady } from './services/ttsService';
 import { DictionaryRepository } from './repositories/dictionaryRepository';
 import { SearchDictionaryUseCase, LookupDictionaryUseCase } from './usecases/dictionary';
 import { authMiddleware } from './middleware/auth';
+import { UserWordRepository } from './repositories/userWordRepository';
+import { CreateUserWordUseCase, UpdateUserWordUseCase, DeleteUserWordUseCase } from './usecases/userWord';
+import { WordSetRepository } from './repositories/wordSetRepository';
+import { dictionaryRoutes } from './routes/dictionary';
 
 export type AppEnv = {
   Variables: {
@@ -36,6 +40,9 @@ export type AppEnv = {
     deleteWordUseCase: DeleteWordUseCase;
     searchDictionaryUseCase: SearchDictionaryUseCase;
     lookupDictionaryUseCase: LookupDictionaryUseCase;
+    createUserWordUseCase?: CreateUserWordUseCase;
+    updateUserWordUseCase?: UpdateUserWordUseCase;
+    deleteUserWordUseCase?: DeleteUserWordUseCase;
     user?: { id: number; username: string };
   };
 };
@@ -44,6 +51,12 @@ const db = createDatabase();
 const wordRepo = new WordRepository(db);
 const getSessionUseCase = new GetSessionUseCase(wordRepo);
 const getWordsUseCase = new GetWordsUseCase(wordRepo);
+
+const wordSetRepo = new WordSetRepository(db);
+const userWordRepo = new UserWordRepository(db);
+const createUserWordUseCase = new CreateUserWordUseCase(userWordRepo, wordSetRepo);
+const updateUserWordUseCase = new UpdateUserWordUseCase(userWordRepo, wordSetRepo);
+const deleteUserWordUseCase = new DeleteUserWordUseCase(userWordRepo);
 
 const reviewRepo = new ReviewRepository(db);
 const submitReviewUseCase = new SubmitReviewUseCase(reviewRepo);
@@ -78,6 +91,7 @@ app.use('/api/session', auth);
 app.use('/api/review', auth);
 app.use('/api/words', auth);
 app.use('/api/word-sets', auth);
+app.use('/api/dictionary', auth);
 
 app.use('/api/*', async (c, next) => {
   c.set('getSessionUseCase', getSessionUseCase);
@@ -89,6 +103,9 @@ app.use('/api/*', async (c, next) => {
   c.set('deleteWordUseCase', deleteWordUseCase);
   c.set('searchDictionaryUseCase', searchDictionaryUseCase);
   c.set('lookupDictionaryUseCase', lookupDictionaryUseCase);
+  c.set('createUserWordUseCase', createUserWordUseCase);
+  c.set('updateUserWordUseCase', updateUserWordUseCase);
+  c.set('deleteUserWordUseCase', deleteUserWordUseCase);
   await next();
 });
 
@@ -102,7 +119,8 @@ const routes = app
   .route('/api/admin', adminRoutes)
   .route('/api/tts', ttsRoutes)
   .route('/api/users', createUsersRoute(db))
-  .route('/api/word-sets', createWordSetsRoute(db));
+  .route('/api/word-sets', createWordSetsRoute(db))
+  .route('/api/dictionary', dictionaryRoutes);
 
 // Content-hashed build assets: URL changes on every content change, so cache
 // them permanently. Old clients that hold a stale bundle simply request the new

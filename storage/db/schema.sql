@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS users (
   username    TEXT NOT NULL UNIQUE,
   pin_hash    TEXT NOT NULL,
   token       TEXT NOT NULL UNIQUE,
+  role        TEXT NOT NULL DEFAULT 'user',
   created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -16,7 +17,9 @@ CREATE TABLE IF NOT EXISTS word_sets (
   name        TEXT NOT NULL,
   level_tag   TEXT NOT NULL CHECK(level_tag IN ('basic', 'intermediate', 'advanced')),
   description TEXT,
-  created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
+  created_by  INTEGER,
+  created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- 3. 単語テーブル (word_set_id との紐付けを追加)
@@ -29,8 +32,10 @@ CREATE TABLE IF NOT EXISTS words (
   example_en  TEXT,
   example_vi  TEXT,
   example_ja  TEXT,
+  created_by  INTEGER,
   created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (word_set_id) REFERENCES word_sets(id) ON DELETE CASCADE
+  FOREIGN KEY (word_set_id) REFERENCES word_sets(id) ON DELETE CASCADE,
+  FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- 4. 学習進捗テーブル (ユーザーIDを追加し、複合UNIQUEに変更)

@@ -452,6 +452,52 @@
 
 * **検証結果**:
   - `yarn typecheck` 合格。
+  - `yarn build` 合格.
+  - 自己修復リトライ回数: 0回。
+
+---
+
+## 実行ログ - 2026-07-16T21:45:00+09:00
+
+### 1. ユーザー指示
+* **インプット**: `/flow docs/spec/impl/phase/Phase6〜10を追加しましたが、デザイン視点の考慮が入ってないので、入れた状態で実装をして`
+
+---
+
+### 2. STEP 1: 設計書の自動同期 (design-sync)
+* **更新ファイル**:
+  - [user-word-management.md](../design/user-word-management.md)
+* **変更内容**:
+  - Berryテーマ（ピンク/やさしい/報われる）への完全準拠を目指し、一般ユーザーの単語・単語セットCRUDに関連するデザイン（入力フォーム角丸、iOSズーム防止の16pxフォント、ぷっくりボタン、控えめな編集/削除アイコン）とやさしいマイクロコピー設計（感情に配慮したConfirmModalでの削除確認「この単語と、おわかれする？」、マスコット🍓付きの成功トースト、上限到達時の労いエラーメッセージなど）およびAtomic Designへのマッピングを設計書に追記。
+
+---
+
+### 3. STEP 2 & 3: 影響範囲・フェーズ定義更新および計画書マージ (phase-sync / plan-sync)
+* **影響フェーズ番号**: Phase 6 (DB基盤・可視性フィルタ)
+* **更新ファイル**:
+  - [phase-7.md](../impl/phase/phase-7.md) / [phase-8.md](../impl/phase/phase-8.md) / [phase-9.md](../impl/phase/phase-9.md) / [phase-10.md](../impl/phase/phase-10.md) (各フェーズ定義)
+  - [plan.md](../impl/steps/6/plan.md) (Phase 6 実装計画書 - 新規作成)
+* **変更内容**:
+  - 各フェーズ定義のフロントエンド実装項目に、Berryテーマに沿った入力フォーム、自分専用バッジ、ConfirmModal、成功トースト、上限エラーなどのUI/UXタスクを追記。
+  - Phase 6（DB基盤・可視性フィルタ）の具体的な実装手順、受け入れ基準、リスク対策を定義した実装計画書 `plan.md` を新規作成。
+
+---
+
+### 4. STEP 4: 自動実装・検証・自己修復 (impl-sync)
+* **修正コード**:
+  - **型定義とスキーマ**:
+    - [types.ts](../../../src/shared/types.ts): `Word` に `created_by` を追加し、`WordInput` から除外。
+    - [schema.sql](../../../storage/db/schema.sql): `users` に `role`、`word_sets`/`words` に `created_by` (FK users.id, CASCADE) を追記。
+  - **サーバー・データベース**:
+    - [db.ts](../../../src/server/db.ts): `migrateColumns()` 内でテーブル構造を確認し、既存データを破壊せずに `role` / `created_by` 列を追加する安全な追記型マイグレーションロジックを実装。
+    - [wordRepository.ts](../../../src/server/repositories/wordRepository.ts): `getSession()`（優先/通常枠SQL）および `getWords()`、件数カウントSQLに `(created_by IS NULL OR created_by = ?)` の可視性フィルタを追加。
+    - [wordSetRepository.ts](../../../src/server/repositories/wordSetRepository.ts): `getWordSetsForUser()` および単語数・習得数カウントSQLに同様の可視性フィルタを追加。
+  - **フロントエンド型同期**:
+    - [WordSetCard.tsx](../../../src/client/components/molecules/WordSetCard/WordSetCard.tsx) / [WordSetSelector.tsx](../../../src/client/components/organisms/WordSetSelector/WordSetSelector.tsx) / [useWordSets.ts](../../../src/client/hooks/useWordSets.ts): フロントエンドの `WordSet` インターフェースに `createdBy: number | null` を追加。
+    - [AtomsShowcase.tsx](../../../src/client/pages/AtomsShowcase.tsx): テスト用ダミーデータに `created_by: null` を追加し、型不整合を解消。
+* **検証結果**:
+  - `yarn typecheck` 合格。
   - `yarn build` 合格。
   - 自己修復リトライ回数: 0回。
+
 

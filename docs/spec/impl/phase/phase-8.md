@@ -16,7 +16,7 @@
 | Infrastructure | `repositories/userWordSetRepository.ts` 新設（所有権チェックをSQLの`WHERE`句に含める）。`schemas/wordSetInput.ts`（`WordSetInputSchema` / `WordSetPartialInputSchema`）新設 |
 | Application | `usecases/userWordSet.ts`（`CreateUserWordSetUseCase` / `UpdateUserWordSetUseCase` / `DeleteUserWordSetUseCase`）新設 |
 | Presentation | `routes/wordSets.ts` に `POST /` / `PUT /:id` / `DELETE /:id` ハンドラを追加 |
-| Frontend | セット作成フォーム（名前・レベルタグ選択・説明）。単語セット一覧に「自分専用」バッジ・編集/削除ボタンを `created_by === activeUserId` の場合のみ表示 |
+| Frontend | ・**単語セット作成/編集フォーム**: Berryテーマ（角丸`--radius-btn`、フォーカス枠線、iOSズーム防止のフォントサイズ16px、レベル選択用丸みのあるトグル、ぷっくりした`--berry-500`背景の送信ボタン）の実装<br>・**「自分専用」バッジ (`Badge`)**: 単語セット一覧カード (`WordSetCard`) に、ユーザー作成セットに対して表示（`--berry-100`背景に`--berry-600`テキストのピル型）<br>・**編集・削除ボタンとやさしい削除確認モーダル (`ConfirmModal`)**: `created_by === activeUserId` の場合のみ編集・削除ボタンを表示。削除時は「この単語セットと、おわかれする？（なかの単語もバイバイしちゃうよ💦）」という問いかけと、「やっぱりいっしょにいる！」「バイバイする」の感情配慮ボタンを表示<br>・**成功時のやさしいトースト**: 登録・編集成功時にマスコット🍓付きのやさしい応援トーストを表示 |
 
 ## スコープ外（このフェーズでやらないこと）
 - セット一覧への登録済み単語数表示（Phase 10、Could have）

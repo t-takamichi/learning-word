@@ -330,6 +330,7 @@ export const AtomsShowcase = (): React.ReactElement => {
               example_en: 'Strawberries are rich in Vitamin C.',
               example_vi: 'Dâu tây rất giàu Vitamin C.',
               example_ja: 'イチゴはビタミンCが豊富です。',
+              created_by: null,
               created_at: '2026-07-08T00:00:00Z',
               progress: { status: 'new', word_id: 101, review_count: 0, incorrect_count: 0, last_reviewed_at: null }
             }}
@@ -345,6 +346,7 @@ export const AtomsShowcase = (): React.ReactElement => {
               example_en: 'Success requires persistence.',
               example_vi: 'Thành công đòi hỏi sự kiên trì.',
               example_ja: '成功には粘り強さが必要です。',
+              created_by: null,
               created_at: '2026-07-08T00:00:00Z',
               progress: { status: 'weak', word_id: 102, review_count: 2, incorrect_count: 1, last_reviewed_at: null }
             }}
@@ -360,6 +362,7 @@ export const AtomsShowcase = (): React.ReactElement => {
               example_en: 'Practice leads to mastery.',
               example_vi: 'Luyện tập dẫn đến sự thành thạo.',
               example_ja: '練習が習得に繋がります。',
+              created_by: null,
               created_at: '2026-07-08T00:00:00Z',
               progress: { status: 'mastered', word_id: 103, review_count: 5, incorrect_count: 0, last_reviewed_at: null }
             }}
@@ -405,6 +408,7 @@ export const AtomsShowcase = (): React.ReactElement => {
               example_en: 'Antigravity makes things float.',
               example_vi: 'Vô trọng lực làm mọi thứ bay lên.',
               example_ja: '反重力は物を浮かせます。',
+              created_by: null,
               created_at: '2026-07-08T00:00:00Z'
             }}
             isAnswerVisible={cardFlipped}

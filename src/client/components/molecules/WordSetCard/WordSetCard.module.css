@@ -110,3 +110,51 @@
   0%, 100% { transform: rotate(15deg) scale(1); }
   50% { transform: rotate(15deg) scale(1.15); }
 }
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.privateBadge {
+  background-color: var(--berry-100);
+  color: var(--berry-600);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-left: 8px;
+}
+
+.actionBtn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.actionBtn:hover {
+  background-color: var(--berry-50);
+  transform: scale(1.1);
+}
+
+.actionBtn:active {
+  transform: scale(0.95);
+}
+
+.deleteBtn:hover {
+  background-color: var(--mint-100);
+}

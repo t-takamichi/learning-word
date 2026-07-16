@@ -8,7 +8,7 @@ import { navigateTo } from '../lib/navigation';
 
 export function WordSetSelectPage(): React.ReactElement {
   const { activeUser, activeUserId, clearActiveUser, isLoading: isUserLoading } = useUsers();
-  const { wordSets, selectWordSet, isLoading: isSetsLoading } = useWordSets(activeUserId);
+  const { wordSets, selectWordSet, createWordSet, updateWordSet, deleteWordSet, isLoading: isSetsLoading } = useWordSets(activeUserId);
   const sound = useSound();
 
   // Guard: if no active user is selected, or the saved user id no longer
@@ -45,7 +45,14 @@ export function WordSetSelectPage(): React.ReactElement {
 
   return (
     <WordSetSelectTemplate username={activeUser.username}>
-      <WordSetSelector wordSets={wordSets} onSelect={handleSelect} />
+      <WordSetSelector 
+        wordSets={wordSets} 
+        onSelect={handleSelect} 
+        activeUserId={activeUserId}
+        onCreate={createWordSet}
+        onEdit={(id, input) => updateWordSet({ id, input })}
+        onDelete={(id) => deleteWordSet(id)}
+      />
     </WordSetSelectTemplate>
   );
 }

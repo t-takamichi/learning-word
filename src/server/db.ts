@@ -40,24 +40,39 @@ function migrateColumns(db: DB): void {
     const pragma = db.prepare('PRAGMA table_info(users)').all() as { name: string }[];
     const columns = pragma.map((c) => c.name);
     if (columns.length > 0) {
-      let migrated = false;
+      let clearUsers = false;
       if (!columns.includes('pin_hash')) {
         db.exec("ALTER TABLE users ADD COLUMN pin_hash TEXT NOT NULL DEFAULT 'invalid'");
-        migrated = true;
+        clearUsers = true;
       }
       if (!columns.includes('token')) {
         db.exec("ALTER TABLE users ADD COLUMN token TEXT NOT NULL DEFAULT 'invalid_token'");
-        migrated = true;
+        clearUsers = true;
+      }
+      if (!columns.includes('role')) {
+        db.exec("ALTER TABLE users ADD COLUMN role TEXT NOT NULL DEFAULT 'user'");
       }
 
-      if (migrated) {
+      if (clearUsers) {
         // 安全に全員再登録してもらうため、移行対象の古いユーザーレコードをすべて削除（クリア）する
         db.exec('DELETE FROM users');
         db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_users_token ON users(token)');
       }
     }
+
+    const pragmaSets = db.prepare('PRAGMA table_info(word_sets)').all() as { name: string }[];
+    const columnsSets = pragmaSets.map((c) => c.name);
+    if (columnsSets.length > 0 && !columnsSets.includes('created_by')) {
+      db.exec('ALTER TABLE word_sets ADD COLUMN created_by INTEGER REFERENCES users(id) ON DELETE CASCADE');
+    }
+
+    const pragmaWords = db.prepare('PRAGMA table_info(words)').all() as { name: string }[];
+    const columnsWords = pragmaWords.map((c) => c.name);
+    if (columnsWords.length > 0 && !columnsWords.includes('created_by')) {
+      db.exec('ALTER TABLE words ADD COLUMN created_by INTEGER REFERENCES users(id) ON DELETE CASCADE');
+    }
   } catch (e) {
-    console.error('Failed to migrate users table columns:', e);
+    console.error('Failed to migrate database table columns:', e);
   }
 }
 

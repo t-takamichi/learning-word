@@ -15,7 +15,7 @@
 | Infrastructure | 変更なし（既存 `DictionaryRepository` を再利用） |
 | Application | 変更なし（既存 `SearchDictionaryUseCase` / `LookupDictionaryUseCase` を再利用） |
 | Presentation | トークン認証（`authMiddleware`）配下の新規ルート（例: `GET /api/dictionary/search`・`GET /api/dictionary/lookup`）を追加し、一般ユーザーにも辞書検索を開放する。既存の `/api/admin/dictionary/*`（Basic認証）はそのまま維持し、重複させない設計判断が必要な場合は本フェーズで検討する |
-| Frontend | Phase 7 の単語追加フォームに、管理画面と同様のオートコンプリートUI（サジェスト候補表示・選択時の自動プレフィル）を追加。既存 `AdminPage` の実装からロジックを共通コンポーネント/フックに切り出して再利用する |
+| Frontend | Phase 7 の単語追加フォームに、管理画面と同様のオートコンプリートUI（サジェスト候補表示・選択時の自動プレフィル）を追加。既存 `AdminPage` の実装からロジックを共通コンポーネント/フックに切り出して再利用する。**サジェストリストのBerryテーマ化**: サジェストリストは角丸`--radius-card`、背景`--surface`、影`--shadow-soft`とし、ホバー時は`--berry-100`背景に`--ink-900`の滑らかな変化を適用する。 |
 
 ## スコープ外（このフェーズでやらないこと）
 - 辞書データ自体の追加・編集（管理者専用のまま）

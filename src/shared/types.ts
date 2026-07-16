@@ -7,6 +7,7 @@ export type Word = {
   readonly example_en: string | null;
   readonly example_vi: string | null;
   readonly example_ja: string | null;
+  readonly created_by: number | null;
   readonly created_at: string;
 };
 
@@ -29,7 +30,7 @@ export type ReviewInput = {
   readonly result: 'good' | 'again';
 };
 
-export type WordInput = Omit<Word, 'id' | 'created_at'>;
+export type WordInput = Omit<Word, 'id' | 'created_at' | 'created_by'>;
 
 export type WordsResponse = {
   readonly words: readonly WordWithProgress[];
