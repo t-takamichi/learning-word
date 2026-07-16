@@ -4,20 +4,17 @@ import { Sparkle } from '../../atoms/Sparkle';
 import styles from './SuccessToast.module.css';
 
 interface Props {
-  message: string;
-  visible: boolean;
+  readonly message: string;
+  readonly visible: boolean;
 }
 
-export const SuccessToast = ({ message, visible }: Props): React.ReactElement | null => {
+export function SuccessToast({ message, visible }: Props): React.ReactElement | null {
   const [shouldRender, setShouldRender] = useState(visible);
-  const [sparkleKey, setSparkleKey] = useState(0);
 
   useEffect(() => {
     if (visible) {
       setShouldRender(true);
-      setSparkleKey((prev) => prev + 1);
     } else {
-      // Delay unmount to let exit animation finish
       const timer = setTimeout(() => {
         setShouldRender(false);
       }, 300);
@@ -32,11 +29,11 @@ export const SuccessToast = ({ message, visible }: Props): React.ReactElement | 
   return (
     <div className={classes} role="alert">
       <div className={styles.sparkleWrapper}>
-        <Sparkle key={sparkleKey} count={6} color="mint" />
+        <Sparkle active={visible} />
       </div>
       <Text variant="body" className={styles.message}>
         {message}
       </Text>
     </div>
   );
-};
+}

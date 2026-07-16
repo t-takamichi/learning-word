@@ -1,1 +1,1 @@
-export { SoundToggle } from './SoundToggle';
+export * from './SoundToggle';

@@ -1,78 +1,37 @@
-# UI/UX 実装計画 — "Berry" テーマ
+# UI/UX 実装計画書 (UX Implementation Plan)
 
-> [../../design/ux/README.md](../../design/ux/README.md) の UI/UX 仕様を、`/impl` で実行できる粒度の実装計画に落とし込む。
-> Atomic Design のボトムアップ（Tokens → Atoms → Molecules → Organisms → Templates → Pages）を実装順序とし、
-> リスクの高いサウンド（iOS 解錠）を早期フェーズに置く。
+本ドキュメントは、定義された UI/UX 設計仕様に基づき、体験価値（Delight）を高め、拡張性と保守性に優れたシステムへと移行するための実装手順とフェーズ分割を定義するロードマップです。
 
 ---
 
-## 1. 全体ゴール
+## 1. 実装方針と原則
 
-現行の黒基調・英語混在・無反応な学習体験を、**Berry テーマ**（ピンク／やさしい／報われる）へ移行する。
-- 機能ロジック（出題アルゴリズム・API・DB スキーマ）は**一切変更しない**（[../../design/ux/README.md](../../design/ux/README.md) §2 スコープ）。
-- 変更対象は **UI/UX 層のみ**：デザイントークン・Atomic 再編・サウンド・モチベーション演出・マイクロコピー。
-- 「作り直し」ではなく **既存コンポーネントの移行** を優先し、破壊範囲を最小化する。
-
----
-
-## 2. フェーズ一覧（Atomic ボトムアップ）
-
-| Phase | 名称 | ゴール概要 | 優先度 | 依存 | 計画書 |
-|-------|------|-----------|--------|------|--------|
-| UX-1 | デザイントークン基盤 | `:root` に Berry トークン定義。背景/テキスト/影を黒→ピンクへ置換（最小の見た目移行） | Must | なし | [phase-1.md](./phase-1.md) |
-| UX-2 | Atoms | Button / Icon / Text / Chip / Badge / StatusDot / Mascot / Sparkle / SoundToggle | Must | UX-1 | [phase-2.md](./phase-2.md) |
-| UX-3 | サウンド基盤 | `useSound`（AudioContext 解錠・Web Audio 合成・ミュート保持・vibrate 存在チェック）。**iOS 制約をここで潰す** | Must | UX-1 | [phase-3.md](./phase-3.md) |
-| UX-4 | Molecules | AudioButton / LanguageToggle / ReviewButtons / ProgressIndicator / StreakBadge / SuccessToast / MuteButton / WordListItem / StatItem | Must | UX-2, UX-3 | [phase-4.md](./phase-4.md) |
-| UX-5 | Organisms | FlashCard 刷新 / WordList / SessionHeader / CelebrationOverlay / CompleteSummary / AutoPlayControls | Must | UX-4 | [phase-5.md](./phase-5.md) |
-| UX-6 | Templates & Pages 結線 | Template 骨組み＋Page 結線。**Good ハンドラに正解演出（音×視覚×言葉）を 200ms 以内で結線**、進捗の完了数基準是正、Auto-Play 折りたたみ | Must | UX-5 | [phase-6.md](./phase-6.md) |
-| UX-7 | モチベーション仕上げ | コンボ／完了祝福／デイリー・継続日数（Should）、reduced-motion・ミュート・マイクロコピーの最終調整 | Should | UX-6 | [phase-7.md](./phase-7.md) |
-| UX-8 | 複数ユーザー & レベル選択 | ユーザー選択・レベル選択画面の実装。ユーザー別進捗トラッキング、ウェルカム演出、レベル完了時の制覇演出 | Must | UX-7 | [phase-8.md](./phase-8.md) |
-
-> Could（XP / レベル / 週間カレンダー）は **V1 では計画に含めない**（過剰実装防止・[../../design/ux/motivation.md](../../design/ux/motivation.md) §7）。
+*   **ボトムアップ順の実装 (Tokens → Atoms → Molecules → Organisms → Pages)**:
+    依存性の低い基礎パーツから順に構築・検証し、上位コンポーネントが下位に依存する Atomic Design の構成を安全に組み上げます。
+*   **リスク（不確実性）の前倒し**:
+    iOS Safari における音声自動再生ブロックやバイブレーションのフォールバックなど、ブラウザ制約が絡む「サウンド・ハプティクス基盤」を早期（UX-3）に実装・解消します。
+*   **検証可能性の担保**:
+    各フェーズおよびタスクごとに動作検証手順を明記し、手戻りのない段階的な移行を実現します。
 
 ---
 
-## 3. フェーズ依存関係図
+## 2. フェーズ分割 (Phase Roadmap)
 
-```mermaid
-graph TD
-  UX1[UX-1: デザイントークン基盤] --> UX2[UX-2: Atoms]
-  UX1 --> UX3[UX-3: サウンド基盤]
-  UX2 --> UX4[UX-4: Molecules]
-  UX3 --> UX4
-  UX4 --> UX5[UX-5: Organisms]
-  UX5 --> UX6[UX-6: Templates & Pages 結線]
-  UX6 --> UX7[UX-7: モチベーション仕上げ]
-  UX7 --> UX8[UX-8: 複数ユーザー & レベル選択]
-```
+体験設計の移行は、以下の 7 つのフェーズに分けて段階的に実行します。
 
-> UX-2（Atoms）と UX-3（サウンド基盤）は UX-1 完了後に**並行着手可能**。
-> リスクの高い UX-3（iOS オーディオ解錠）を前倒しして不確実性を早期に潰す。
+| フェーズ | フェーズ名 | 主な実装内容 | 依存関係 |
+|:---|:---|:---|:---|
+| **UX-1** | [デザイントークン基盤](file:///Users/tanakakoushin/Documents/workspace/projects/2026/projects/learning-word/docs/spec/impl/ux/phase-1.md) | `:root` のCSS変数定義、背景・テキストのカラー置換（真っ黒排除）。 | なし |
+| **UX-2** | [Atoms (原子部品)](file:///Users/tanakakoushin/Documents/workspace/projects/2026/projects/learning-word/docs/spec/impl/ux/phase-2.md) | `Button`, `Text`, `Badge`, `Mascot`, `Sparkle` などの最小単位のPureコンポーネント構築。 | UX-1 |
+| **UX-3** | [サウンド・ハプティクス基盤](file:///Users/tanakakoushin/Documents/workspace/projects/2026/projects/learning-word/docs/spec/impl/ux/phase-3.md) | Web Audio 合成音ライブラリ `sfx.ts` と `useSound` フック、iOS解錠、ミュート永続化の実装。 | UX-1 |
+| **UX-4** | [Molecules (分子部品)](file:///Users/tanakakoushin/Documents/workspace/projects/2026/projects/learning-word/docs/spec/impl/ux/phase-4.md) | `AudioButton`, `ReviewButtons`, `WordListItem`, `WordSetCard` 等の複合Pureコンポーネント構築・移設。 | UX-2, UX-3 |
+| **UX-5** | [Organisms (主要ブロック)](file:///Users/tanakakoushin/Documents/workspace/projects/2026/projects/learning-word/docs/spec/impl/ux/phase-5.md) | `FlashCard`, `WordList`, `SessionHeader`, `CelebrationOverlay` 等の機能ブロック構築・移設。 | UX-4 |
+| **UX-6** | [Templates & Pages 結線](file:///Users/tanakakoushin/Documents/workspace/projects/2026/projects/learning-word/docs/spec/impl/ux/phase-6.md) | レイアウトへの配置、学習回答ハンドラへの正解演出（音＋振動＋スパークル）の結線。 | UX-5 |
+| **UX-7** | [モチベーション仕上げ](file:///Users/tanakakoushin/Documents/workspace/projects/2026/projects/learning-word/docs/spec/impl/ux/phase-7.md) | コンボ演出の洗練、完了祝福画面、ストリーク継続の寄り添い、`prefers-reduced-motion` 対応の最終調整。 | UX-6 |
 
 ---
 
-## 4. 移行方針（重要）
+## 3. 実装の実行方法
 
-- `src/client/components/{atoms,molecules,organisms,templates}/` を新設し、既存 `components/*` を段階的に再配置する。
-- 各フェーズは **型チェック（`bun run typecheck`）が通る状態** を保ちながら進める。移行中は旧 import を残し、Page 結線（UX-6）で切替える。
-- 色・余白・角丸・影は**必ずトークン参照**。Atom/Molecule に生の HEX を書かない（[../../design/ux/component-structure.md](../../design/ux/component-structure.md) R-ATOM-02）。
-- 依存は常に一方向（Pages → Templates → Organisms → Molecules → Atoms → Tokens）。下位は上位を import しない。
-
----
-
-## 5. 関連ドキュメント
-
-| ドキュメント | 内容 |
-|------------|------|
-| [component-tasks.md](./component-tasks.md) | 全コンポーネントの新規/移行/置換マップ（層・元/新パス・依存・AC） |
-| [phase-1.md](./phase-1.md) 〜 [phase-7.md](./phase-7.md) | 各フェーズのタスク表＋詳細＋受け入れ基準 |
-
-**参照（設計）**: [visual-design](../../design/ux/visual-design.md) / [component-structure](../../design/ux/component-structure.md) / [motivation](../../design/ux/motivation.md) / [sound-haptics](../../design/ux/sound-haptics.md) / [acceptance-criteria](../../design/ux/acceptance-criteria.md)
-**参照（規約）**: [react.md](../../../rules/react.md) / [TypeScript.md](../../../rules/TypeScript.md) / [architecture.md](../../../rules/architecture.md)
-
----
-
-## 6. 完了後
-
-各フェーズ完了時に [../../../../.claude/skills/ux-impl-plan/rules/quality-gate.md](../../../../.claude/skills/ux-impl-plan/rules/quality-gate.md) の該当項目を検収し、
-`/impl UX-1` から順に実装を実行する。
+各フェーズの実装を開始する際は、実装支援サブエージェント（または `/impl` コマンド）を使用し、対応する計画書（例: `/ux-impl docs/spec/impl/ux/phase-1.md`）を読み込ませて開始してください。
+各タスクが完了するごとに型チェック (`yarn typecheck`) および動作確認を行い、品質ゲートを通過しながら進めます。

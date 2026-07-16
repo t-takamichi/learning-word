@@ -1,24 +1,28 @@
-.toggle {
-  display: inline-flex;
+.toggleButton {
+  background: var(--berry-100);
+  border: 1px solid rgba(255, 111, 165, 0.18);
+  border-radius: var(--radius-pill);
+  width: 44px;
+  height: 44px;
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-pill);
-  background-color: var(--berry-100);
-
-  border: none;
   cursor: pointer;
   outline: none;
-  transition: transform 0.1s ease, background-color 0.1s ease;
-  padding: 0;
-  box-sizing: border-box;
+  transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+  user-select: none;
 }
 
-.toggle:hover {
+.toggleButton:hover {
   background-color: var(--berry-200);
 }
 
-.toggle:active {
-  transform: translateY(1px);
+.toggleButton:active {
+  transform: scale(0.95);
+  box-shadow: var(--shadow-press);
+}
+
+.icon {
+  font-size: 1.25rem;
+  line-height: 1;
 }

@@ -179,16 +179,16 @@ export const AtomsShowcase = (): React.ReactElement => {
         <Text as="h2" variant="heading">7. Mascot Component</Text>
         <div style={{ display: 'flex', gap: '40px', padding: '24px', backgroundColor: 'var(--surface)', borderRadius: '12px', boxShadow: 'var(--shadow-soft)' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-            <Mascot mood="idle" size={80} />
-            <Text variant="hint">idle</Text>
+            <Mascot expression="standard" />
+            <Text variant="hint">standard</Text>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-            <Mascot mood="happy" size={80} />
+            <Mascot expression="happy" />
             <Text variant="hint">happy</Text>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-            <Mascot mood="cheer" size={80} />
-            <Text variant="hint">cheer</Text>
+            <Mascot expression="sad" />
+            <Text variant="hint">sad</Text>
           </div>
         </div>
       </section>
@@ -202,8 +202,7 @@ export const AtomsShowcase = (): React.ReactElement => {
           </div>
           <div style={{ height: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', border: '1px dashed var(--berry-200)', borderRadius: '8px' }}>
             <span style={{ position: 'absolute' }}>Center Point</span>
-            <Sparkle key={`sunny-${sparkleKey}`} count={10} color="sunny" />
-            <Sparkle key={`mint-${sparkleKey}`} count={10} color="mint" />
+            <Sparkle active={sparkleKey > 0} />
           </div>
         </div>
       </section>
@@ -438,9 +437,7 @@ export const AtomsShowcase = (): React.ReactElement => {
           </Button>
           <CelebrationOverlay
             active={celebrationActive}
-            variant={celebrationVariant}
             comboCount={5}
-            onClose={() => setCelebrationActive(false)}
           />
         </div>
       </section>

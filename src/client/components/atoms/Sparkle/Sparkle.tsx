@@ -1,52 +1,31 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './Sparkle.module.css';
 
 interface Props {
-  count?: number;
-  color?: 'sunny' | 'mint';
-  className?: string;
+  readonly active: boolean;
 }
 
-export const Sparkle = ({
-  count = 8,
-  color = 'sunny',
-  className = '',
-}: Props): React.ReactElement => {
-  const colorVar = color === 'sunny' ? 'var(--sunny-400)' : 'var(--mint-500)';
+export function Sparkle({ active }: Props): React.ReactElement | null {
+  const [shouldRender, setShouldRender] = useState(false);
 
-  // Pre-calculate positions to ensure SSR and hydration match, and to avoid re-renders.
-  const particles = useMemo(() => {
-    const list = [];
-    for (let i = 0; i < count; i++) {
-      const angle = (2 * Math.PI * i) / count;
-      const distance = 24 + (i % 3) * 8; // Varied distance (24px, 32px, 40px)
-      const dx = `${Math.round(distance * Math.cos(angle))}px`;
-      const dy = `${Math.round(distance * Math.sin(angle))}px`;
-      // Alternate between circles and star-like diamond shapes
-      const isCircle = i % 2 === 0;
-      list.push({ dx, dy, isCircle });
+  useEffect(() => {
+    if (active) {
+      setShouldRender(true);
+      const timer = setTimeout(() => setShouldRender(false), 800);
+      return () => clearTimeout(timer);
     }
-    return list;
-  }, [count]);
+  }, [active]);
+
+  if (!shouldRender) return null;
 
   return (
-    <div
-      className={`${styles.container} ${className}`.trim()}
-      style={{ '--sparkle-color': colorVar } as React.CSSProperties}
-    >
-      {particles.map((p, idx) => (
-        <span
-          key={idx}
-          className={`${styles.particle} ${p.isCircle ? styles.circle : styles.star}`}
-          style={
-            {
-              '--dx': p.dx,
-              '--dy': p.dy,
-              animationDelay: `${idx * 0.04}s`,
-            } as React.CSSProperties
-          }
-        />
-      ))}
+    <div className={styles.sparkleContainer}>
+      <div className={`${styles.particle} ${styles.p1}`}>★</div>
+      <div className={`${styles.particle} ${styles.p2}`}>🌸</div>
+      <div className={`${styles.particle} ${styles.p3}`}>✨</div>
+      <div className={`${styles.particle} ${styles.p4}`}>🍓</div>
+      <div className={`${styles.particle} ${styles.p5}`}>★</div>
+      <div className={`${styles.particle} ${styles.p6}`}>✨</div>
     </div>
   );
-};
+}

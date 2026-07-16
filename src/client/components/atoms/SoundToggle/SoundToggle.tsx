@@ -1,33 +1,22 @@
 import React from 'react';
-import { Icon } from '../Icon';
 import styles from './SoundToggle.module.css';
 
 interface Props {
-  muted: boolean;
-  onToggle?: () => void;
-  className?: string;
+  readonly muted: boolean;
+  readonly onToggle: () => void;
 }
 
-export const SoundToggle = ({
-  muted,
-  onToggle,
-  className = '',
-}: Props): React.ReactElement => {
-  const classes = [styles.toggle, className].filter(Boolean).join(' ');
-
+export function SoundToggle({ muted, onToggle }: Props): React.ReactElement {
   return (
-    <button
-      type="button"
-      className={classes}
+    <button 
+      className={styles.toggleButton} 
       onClick={onToggle}
-      aria-label={muted ? 'Turn sound on' : 'Turn sound off'}
+      aria-label={muted ? "音声をオンにする" : "音声をオフにする"}
+      type="button"
     >
-      <Icon
-        name={muted ? 'sound-off' : 'sound-on'}
-        size={16}
-        color="var(--ink-700)"
-      />
-
+      <span className={styles.icon} role="img" aria-hidden="true">
+        {muted ? '🔇' : '🔊'}
+      </span>
     </button>
   );
-};
+}

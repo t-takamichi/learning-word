@@ -1,67 +1,117 @@
-# 分析 STEP1 — 現状インベントリ（棚卸し）
+# UI/UX分析 - STEP 1: 現状インベントリ（棚卸し）
 
-対象: `src/client/**`（実装実データより）／親: [../README.md](../README.md)
+本ドキュメントは、既存の `learning-word` プロダクトの画面、UIコンポーネント、デザイントークン、およびフィードバック機構の現状を棚卸ししたものです。
 
 ---
 
 ## 1. 画面一覧
 
-| 画面 | ファイル | 役割 |
-|------|---------|------|
-| 学習ページ | `pages/StudyPage.tsx` | フラッシュカード＋自動再生＋進捗＋単語リストを1画面に集約 |
-| 管理ページ | `pages/AdminPage.tsx` | 単語CRUD（Basic認証） |
+| 画面名 / ファイル名 | 主な役割 / 体験上の位置づけ | 備考 |
+|:---|:---|:---|
+| **ユーザー選択画面**<br>`UserSelectPage.tsx` | アプリ起動時に学習者を選択する最初の画面。 | シンプルなカードリスト。 |
+| **単語セット選択画面**<br>`WordSetSelectPage.tsx` | 学習レベル（初級・中級・上級）やカスタムセットを選択する画面。 | ユーザーが作成した「自分専用」セットの作成・編集・削除機能も包含。 |
+| **学習画面（リストモード）**<br>`StudyPage.tsx` / `WordList.tsx` | セット内の単語一覧を表示し、単語の追加・編集・削除を行う画面。 | 辞書オートコンプリート検索機能あり。 |
+| **学習画面（学習モード）**<br>`StudyPage.tsx` / `FlashCard.tsx` | フラッシュカード形式で単語のクイズ（覚えた/もう一回）を進める画面。 | 自動再生、音声合成（TTS）あり。 |
+| **管理者画面**<br>`AdminPage.tsx` | 基本単語や単語セットを管理するためのBasic認証付き画面。 | 一般ユーザーの体験外。 |
+| **AtomsShowcase**<br>`AtomsShowcase.tsx` | デザイントークンや各Atomコンポーネントの開発者向けプレビュー画面。 | 開発者用。 |
 
-> 単語リスト（`WordList`）は独立画面ではなく **StudyPage の下部に同居**している（`StudyPage.tsx:162`）。
+---
 
-## 2. コンポーネント一覧（現状の粒度）
+## 2. コンポーネント一覧（Atomic Design分類）
 
-| コンポーネント | ファイル | 見立て（Atomic） | 備考 |
-|--------------|---------|----------------|------|
-| FlashCard | `components/FlashCard/` | Organism | 表/裏・こたえを見る |
-| ReviewButtons | `components/ReviewButtons/` | Molecule | Again(❌)/Good(⭕) |
-| AudioButton | `components/AudioButton/` | Molecule | 🔊 発音（TTS） |
-| LanguageToggle | `components/LanguageToggle/` | Molecule | 🇻🇳/🇯🇵 |
-| WordList / WordListItem | `components/WordList/` | Organism / Molecule | 一覧＋ステータスバッジ＋ページャ |
-| CompleteScreen | `components/CompleteScreen/` | Organism（要分解） | 完了画面 |
-| Auto-Play制御 | StudyPage内にインライン | 未分離 | Front/Back秒数の数値入力 |
+現状の `src/client/components/` の構造を基にした分類です。
 
-## 3. 現状デザイントークン（実値抽出）
+### 2.1. Atoms（最小単位）
+*   `Badge`: レベルや状態を示す小さなバッジ。
+*   `Button`: ぷっくりした角丸のボタン。
+*   `Chip`: レベルタグなどを選択・表示するためのチップ。
+*   `Icon`: 各種アイコン。
+*   `Mascot`: ベリーちゃん（アプリのマスコット）のイラスト・状態。
+*   `SoundToggle`: 音声オン/オフを切り替えるトグルの見た目。
+*   `Sparkle`: エフェクト用キラキラ演出。
+*   `StatusDot`: 状態（インライン等）を示すドット。
+*   `Text`: タイポグラフィシステムに基づいた文字要素。
+*   `UserAvatar`: ユーザーの丸いアイコン。
 
-**トークンは未定義**（CSS変数なし）。各 `*.module.css` に生値がハードコードされている。
+### 2.2. Molecules（複合コンポーネント）
+*   `AudioButton`: 発音音声の再生ボタン。
+*   `LanguageToggle`: 日本語とベトナム語の表示言語切り替え。
+*   `MuteButton`: 音声ミュートのボタン。
+*   `ProgressIndicator`: 学習セッションの進行を示すインジケータ。
+*   `ReviewButtons`: 「もう一回 (Again)」「覚えた (Good)」の回答ボタン。
+*   `StatItem`: 連続日数や学習数などの統計表示。
+*   `StreakBadge`: 継続日数を炎の絵文字とともに示すバッジ。
+*   `SuccessToast`: 操作成功時に表示するトースト。
+*   `UserCard`: ユーザー選択用のカード。
+*   `WordListItem`: 単語リスト内の1行（編集・削除機能付き）。
+*   `WordSetCard`: 単語セットの選択カード（進捗バー付き）。
 
-| 役割 | 現状の実値 | 使用箇所 |
-|------|-----------|---------|
-| 背景 | `radial-gradient(#1c1d24 → #0c0d12)` / `#0c0d12` | StudyPage |
-| テキスト（主） | `#ffffff` | 全体 |
-| テキスト（副） | `rgba(255,255,255,0.4〜0.6)` | ヒント・補助 |
-| 面（カード） | `rgba(255,255,255,0.03〜0.08)` | Card全般 |
-| ボーダー | `rgba(255,255,255,0.08〜0.15)` | 全体 |
-| アクセント（正解/翻訳） | `#81c784`（緑） | FlashCard翻訳 |
-| Good ボタン | `#ffffff` 背景 / `#1e1e24` 文字 | ReviewButtons |
-| Again ボタン | `#ef5350`（赤） | ReviewButtons |
-| ステータス badge | `#fbbf24`(new) / `#f87171`(weak) / `#34d399`(mastered) | WordList |
-| 影 | `rgba(0,0,0,0.15〜0.3)` | 全体（黒い影） |
-| 角丸 | 8 / 12 / 14 / 16 / 24 / 28px（バラバラ） | 各所 |
-| フォント | 指定なし（system既定・サンセリフ） | 全体 |
+### 2.3. Organisms（画面ブロック）
+*   `AutoPlayControls`: 自動再生の速度や秒数を変更するパネル。
+*   `CelebrationOverlay`: コンボや全問正解時の全画面お祝い演出。
+*   `CompleteSummary`: セッション完了時のまとめ（スコア・継続日数）。
+*   `FlashCard`: 単語のフラッシュカード（めくるアクション）。
+*   `SessionHeader`: セッションの進捗率やミュート切り替え。
+*   `UserSelector`: ユーザー一覧リスト。
+*   `WordList`: ページネーション付き単語リスト（追加・編集・削除フォーム）。
+*   `WordSetSelector`: レベル別（初中上級）タブと単語セット一覧。
 
-→ **色・角丸・影に一貫したトークンがなく、値が散在**。ピンク化＝全ファイルの生値置換が必要。
+### 2.4. Templates（レイアウトフレーム）
+*   `UserSelectTemplate` / `WordSetSelectTemplate` / `StudyTemplate` / `CompleteTemplate` / `WordListTemplate`
+
+---
+
+## 3. 現状のデザイントークン（Berryテーマ）
+
+[index.css](file:///src/client/index.css) から抽出したデザイントークンの値です。
+
+### 3.1. カラーパレット
+
+| トークン名 | 実値 (HEX) | 役割 |
+|:---|:---|:---|
+| `--berry-500` | `#FF6FA5` | メインブランド（ピンク）。基本のボタンやアクセント。 |
+| `--berry-400` | `#FF8FB8` | ホバー時のピンク。 |
+| `--berry-600` | `#F0568F` | アクティブ時・強強調のピンク。 |
+| `--berry-200` | `#FFC1D6` | 弱いピンク。 |
+| `--berry-100` | `#FFE4EF` | 薄いピンク（背景・バッジ背景）。 |
+| `--berry-50`  | `#FFF0F5` | 極薄のピンク背景。 |
+| `--mint-500` | `#3FC7A0` | 正解・Good・完了・初級のグリーン。 |
+| `--mint-100` | `#DFF7EF` | グリーンのソフト背景。 |
+| `--lavender-500` | `#B69CFF` | 補助色（パープル・上級）。 |
+| `--sunny-400` | `#FFC94D` | Newバッジなどのイエロー。 |
+| `--coral-500` | `#FF7A6B` | 警告・エラー・削除・Againのコーラル（レッド）。 |
+| `--ink-900` | `#4A2C3A` | メイン의文字色（黒の代わり、深みのあるブラウン）。 |
+| `--ink-700` | `#6E5561` | サブの文字色。 |
+| `--ink-400` | `#A38C97` | プレースホルダーや非活性テキスト。 |
+| `--surface` | `#FFFFFF` | カードやモーダルの背景白。 |
+| `--surface-tint`| `#FFF7FA` | やさしい色合いのサーフェス。 |
+| `--bg-gradient` | `linear-gradient(180deg, #FFF0F5 0%, #FFE4EF 100%)` | 全体の背景グラデーション。 |
+
+### 3.2. 形状 (Shape)
+*   `--radius-card`: `28px` (カード・モーダルの角丸。非常に丸みが強い)
+*   `--radius-btn`: `18px` (ボタン・入力欄 of 角丸)
+*   `--radius-pill`: `9999px` (バッジなどの完全な丸み)
+
+### 3.3. 影・浮遊感 (Elevation)
+*   `--shadow-soft`: `0 8px 24px rgba(255, 111, 165, 0.18)` (やわらかいピンクの影)
+*   `--shadow-pop`: `0 12px 32px rgba(255, 111, 165, 0.28)` (ホバー時の影)
+*   `--shadow-press`: `0 2px 8px rgba(255, 111, 165, 0.20)` (押し込んだ時の影)
+
+---
 
 ## 4. フィードバック機構の現状
 
-| 機構 | 現状 | 根拠 |
-|------|------|------|
-| 正解音（Nice!等） | **無** | サウンド再生は `useSpeech`（発音TTS）のみ。効果音の仕組み・音源・`useSound`は存在しない |
-| 正解アニメ | **無** | Goodタップ時、`submitReview('good')` を呼ぶだけ（`ReviewButtons.tsx:23-29`）。視覚演出なし |
-| 褒め言葉 | **無** | トースト・メッセージなし |
-| ストリーク/コンボ | **無** | 状態・UIともに無し |
-| 完了の祝福 | **静的な🎉絵文字のみ** | `CompleteScreen.tsx`。コンフェッティ・音・サマリー無し |
-| 進捗表示 | **有** | `currentIndex / words.length`（`StudyPage.tsx:140`）。ただし0始まりで開始時「0 / 10」 |
-| ハプティクス | **無** | `navigator.vibrate` 呼び出しなし |
-| マスコット/世界観 | **無** | キャラクター・物語要素なし |
+学習モチベーションに関わる演出やフィードバックの有無を整理しました。
 
-## 5. その他の観察
-
-- **文言が英語混在**: 「Auto-Play: ON」「Front / Back」「Good / Again」など英語UIと VI/JA が混在。対象ユーザーにとって不統一
-- **Auto-Play制御が技術的**: 秒数の数値入力(`type="number"`)がヘッダー上部に常時露出。学習の主役より目立ち、"エンジニアのツール"感が強い
-- **完了画面のコピー**: 実際はベトナム語＋日本語併記（設計の「VIのみ」方針と実装が乖離）
-- セーフエリア(`env(safe-area-inset-*)`)は一部で考慮済み（ReviewButtons下部）
+*   **[有] 効果音 (Sound Effect)**:
+    *   Web Audio API Oscillator によるシンセサイザー合成音を実装。
+    *   `correct` (Good判定), `combo` (コンボ継続), `again` (もう一回判定), `flip` (カードめくり), `complete` (セッション完了), `tap` (ボタン押し)。
+*   **[有] 振動 (Haptic Vibration)**:
+    *   `navigator.vibrate` が有効なデバイスで、正解（単一振動）、コンボ（連続振動）、完了（長めの振動パターン）を実行。
+*   **[有] 祝福・お祝い (Celebration)**:
+    *   フラッシュカード学習中の正解コンボ（5連続等）で `CelebrationOverlay` が作動。画面いっぱいにキラキラとベリーちゃんのアニメーションを表示。
+    *   セッション完了時に `CompleteSummary` で王冠👑とベリーちゃんのお祝いを表示。
+*   **[有] マイクロコピー (Microcopy)**:
+    *   削除の「おわかれ」確認、登録上限時の「いまはここまで！よくがんばったね🌸」など、冷たさを排除したやさしい言い回しを実装。
+*   **[無] マイクロインタラクション・トランジション**:
+    *   ボタンやカードのホバー時に `scale` が変化する演出はあるが、アニメーション遷移（画面間のシームレスな移動や、カードが吸い込まれるような演出）は限定的。

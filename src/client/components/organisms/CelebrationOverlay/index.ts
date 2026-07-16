@@ -1,1 +1,1 @@
-export { CelebrationOverlay } from './CelebrationOverlay';
+export * from './CelebrationOverlay';

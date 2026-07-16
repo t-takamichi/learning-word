@@ -3,7 +3,7 @@ import { Mascot } from '../../atoms/Mascot';
 import styles from './UserSelectTemplate.module.css';
 
 interface Props {
-  children: React.ReactNode;
+  readonly children: React.ReactNode;
 }
 
 export function UserSelectTemplate({ children }: Props): React.ReactElement {
@@ -11,7 +11,7 @@ export function UserSelectTemplate({ children }: Props): React.ReactElement {
     <div className={styles.wrapper}>
       <div className={styles.content}>
         <div className={styles.welcomeArea}>
-          <Mascot mood="cheer" />
+          <Mascot expression="standard" />
           <h1 className={styles.title}>だれがまなぶ？🍓</h1>
           <p className={styles.subtitle}>いっしょにえいごのべんきょうをはじめよう！</p>
         </div>

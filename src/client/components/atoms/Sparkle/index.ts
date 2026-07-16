@@ -1,1 +1,1 @@
-export { Sparkle } from './Sparkle';
+export * from './Sparkle';

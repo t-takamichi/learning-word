@@ -1,75 +1,50 @@
-.container {
-  position: relative;
-  width: 0;
-  height: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.sparkleContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+  z-index: 100;
 }
 
 .particle {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  background-color: var(--sparkle-color);
-  pointer-events: none;
-  transform: translate(-50%, -50%) scale(0);
-  animation: explode 0.8s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+  font-size: 1.5rem;
+  opacity: 0;
+  user-select: none;
+  animation: explode 0.6s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
 }
 
-.circle {
-  width: 6px;
-  height: 6px;
-  border-radius: var(--radius-pill);
-}
-
-.star {
-  width: 8px;
-  height: 8px;
-  clip-path: polygon(50% 0%, 65% 35%, 100% 50%, 65% 65%, 50% 100%, 35% 65%, 0% 50%, 35% 35%);
-}
+.p1 { --x: -60px; --y: -50px; animation-delay: 0s; }
+.p2 { --x: 60px; --y: -40px; animation-delay: 0.05s; }
+.p3 { --x: -30px; --y: 60px; animation-delay: 0.02s; }
+.p4 { --x: 40px; --y: 50px; animation-delay: 0.08s; }
+.p5 { --x: -70px; --y: 10px; animation-delay: 0.04s; }
+.p6 { --x: 70px; --y: 10px; animation-delay: 0.06s; }
 
 @keyframes explode {
   0% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0;
-  }
-  15% {
-    transform: translate(-50%, -50%) scale(1.2);
+    transform: translate(0, 0) scale(0.3) rotate(0deg);
     opacity: 1;
-  }
-  100% {
-    transform: translate(
-      calc(-50% + var(--dx)),
-      calc(-50% + var(--dy))
-    ) scale(0);
-    opacity: 0;
-  }
-}
-
-/* Accessibility / Reduced Motion */
-@media (prefers-reduced-motion: reduce) {
-  .particle {
-    /* Instantly appear at destination, then fade out slowly without movement */
-    transform: translate(
-      calc(-50% + var(--dx)),
-      calc(-50% + var(--dy))
-    ) scale(1);
-    animation: fadeOut 1.5s ease-out forwards;
-  }
-}
-
-@keyframes fadeOut {
-  0% {
-    opacity: 0;
-  }
-  10% {
-    opacity: 0.8;
   }
   80% {
     opacity: 0.8;
   }
   100% {
+    transform: translate(var(--x), var(--y)) scale(1) rotate(180deg);
     opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .particle {
+    animation: fade-simple 0.4s ease forwards;
+  }
+  @keyframes fade-simple {
+    0% { opacity: 0; }
+    50% { opacity: 0.8; }
+    100% { opacity: 0; }
   }
 }

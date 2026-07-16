@@ -1,66 +1,38 @@
-.mascot {
-  display: inline-block;
-  flex-shrink: 0;
-}
-
-/* Animations */
-@keyframes float {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-4px);
-  }
-  100% {
-    transform: translateY(0);
-  }
-}
-
-.idle {
+.container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  line-height: 1;
+  user-select: none;
   animation: float 3s ease-in-out infinite;
 }
 
-@keyframes wiggle {
-  0%, 100% {
-    transform: rotate(0deg);
-  }
-  25% {
-    transform: rotate(-3deg);
-  }
-  75% {
-    transform: rotate(3deg);
-  }
-}
-
 .happy {
-  animation: wiggle 0.6s ease-in-out infinite alternate;
+  animation: bounce 0.5s ease infinite alternate;
 }
 
-@keyframes hop {
-  0%, 100% {
-    transform: translateY(0) scale(1);
-  }
-  40% {
-    transform: translateY(-10px) scale(1.02);
-  }
-  50% {
-    transform: translateY(-10px) scale(0.98);
-  }
-  85% {
-    transform: translateY(0) scale(0.98);
-  }
+.sad {
+  animation: float-slow 4s ease-in-out infinite;
 }
 
-.cheer {
-  animation: hop 0.8s ease-in-out infinite;
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
 
-/* Accessibility / Reduced Motion */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-4px) rotate(2deg); }
+}
+
+@keyframes bounce {
+  0% { transform: translateY(0) scale(1); }
+  100% { transform: translateY(-10px) scale(1.05); }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .idle,
-  .happy,
-  .cheer {
+  .container, .happy, .sad {
     animation: none !important;
-    transform: none !important;
   }
 }

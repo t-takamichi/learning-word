@@ -1,140 +1,68 @@
-# UI/UX 仕様書 — "Berry" テーマ（Anki-Lite for Her）
+# UI/UX基本設計書 (UX Design Specification)
 
-> このディレクトリは、機能設計（[../README.md](../README.md)）に対する **UI/UX 層の仕様** を定義する。
-> 「何を作るか（機能）」は親設計、「どう見せ・どう感じさせるか（体験）」を本仕様が担う。
-
----
-
-## 0. なぜ作り直すのか（課題認識）
-
-現行UIは背景 `#0c0d12`（ほぼ黒）＋白文字＋グレーの、いわゆる **"The 男性向け学習ツール"** な硬派デザイン。
-機能は正しいが、**対象ユーザー（20代ベトナム人女性・日常の隙間時間に使う）に感情的に響かない。**
-
-学習アプリの継続率を決めるのは機能ではなく **「また開きたくなる感情」**。
-本仕様は、以下3つの体験原則で作り直す。
-
-| 原則 | 内容 |
-|------|------|
-| **Delightful（心地よい）** | ピンクベースのやさしい世界観。触れて楽しい。 |
-| **Rewarding（報われる）** | 正解・継続・完了のたびに、音・アニメ・言葉で必ず褒める。 |
-| **Effortless（無理がない）** | 片手・隙間時間・iPhone Safari を最優先。頑張らせない。 |
+本ドキュメントは、英語・ベトナム語の学習者向けアプリ `learning-word` における、UI/UXデザインコンセプト、デザイン原則、および体験設計の全体像を定義する入口（README）です。
 
 ---
 
-## 1. デザインコンセプト
+## 1. デザインコンセプトとブランドムード
 
-**コンセプトワード**: 「がんばりが、ごほうびになる単語帳」
+### コンセプトワード
+> **「やさしい応援と指先のごほうびで、もっと学びたくなるBerry単語帳」**
 
-学習を「タスク」ではなく「かわいい相棒とのごほうび体験」に変える。
-達成のたびに世界が反応し、彼女の"できた"を全力で祝う。
+学習の単調さを排除し、隙間時間に片手で触るだけで心が弾むような、極上の「Delight（よろこび）」をもたらす学習体験を提供します。
 
-### ブランドムード（3語）
-`やさしい / あまい / 前向き`
-
-### トーン&マナー
-- 丸みのある形・やわらかい影・淡いピンクグラデーション
-- 命令形ではなく **応援形**（「もう一回」ではなく「もういちど、いっしょに」）
-- 真っ黒（`#000`）を使わない。テキストも濃いプラム系で"やわらげる"
+### ブランドムード（3つのキーワード）
+1.  **やさしい (Gentle)**: 厳しさやプレッシャーを感じさせない、包み込むようなやさしさ。失敗（間違い）さえも寄り添う。
+2.  **あまい (Sweet)**: いちご（Berry）を想起させる、大人すぎず子供すぎない、あまく愛着のわく世界観。
+3.  **前向き (Positive)**: 少しの進捗でもベリーちゃんが一緒になって喜び、次の一歩を踏み出したくなる応援感。
 
 ---
 
-## 2. スコープ
+## 2. デザイン原則 (Design Principles)
 
-| 区分 | 内容 |
-|------|------|
-| **In scope** | カラーテーマのピンク化、モチベーション機構（ストリーク/進捗/祝福）、サウンド&ハプティクスフィードバック、マイクロコピー刷新、主要画面のビジュアル刷新（学習・単語リスト・完了・管理・**新規:ユーザー選択・新規:単語セット選択**）、複数ユーザー・レベル別進捗データの表示 |
-| **Out of scope** | アプリケーション全体の多言語UI化（UI文言は日本語ベース）、詳細なテーマ切替（ダーク/ライト選択機能） |
+UI/UX設計における判断基準となる5つの原則です。デザインに迷った際は、この優先順位（P1〜P5）に従います。
 
-> 機能面は親設計の「ユーザー・単語セット設計」を前提とし、本仕様は **対応するUI/UX、演出、画面フロー** を規定する。
-
----
-
-## 3. ドキュメント構成
-
-| ドキュメント | 内容 |
-|------------|------|
-| [visual-design.md](./visual-design.md) | デザインシステム：カラー / タイポ / 余白 / 角丸 / 影 / コンポーネントスタイル（黒→ピンクの対応表つき） |
-| [motivation.md](./motivation.md) | モチベーション機構：ストリーク・進捗リング・XP/レベル・祝福演出・マイクロコピー |
-| [sound-haptics.md](./sound-haptics.md) | 正解音"Nice!"を含むサウンド設計・ハプティクス・iOS Safari制約と実装方針 |
-| [quality-bar.md](./quality-bar.md) | 「ディズニーPMとしての品質判断」：感情曲線・Plussing・合否基準 |
-| [acceptance-criteria.md](./acceptance-criteria.md) | UI/UXの受け入れ基準（AC）と品質ゲート |
+*   **P1: Delight (よろこび) を最優先する** (Delight First)
+    *   正解時、完了時の「音・振動・光」のフィードバックを通じて、脳に心地よい報酬を与え、ゲームのように遊べる感覚を作ります。
+*   **P2: ユーザーのがんばりを見逃さない** (Acknowledge effort)
+    *   連続正解（コンボ）や毎日の継続（ストリーク）など、ユーザーの少しずつの努力にマスコット「ベリーちゃん」が敏感に反応し、しっかりと褒め称えます。
+*   **P3: 片手・隙間時間の使いやすさを守る** (Mobile First & Safari Ready)
+    *   20代ユーザーの主なデバイスである「片手持ちのiPhone」で、親指が届き誤操作のないタップ領域を確保し、iOS Safariの音声自動再生ブロックなどの制約を完全に解決した設計を行います。
+*   **P4: うるさくしない（やりすぎ防止）** (Plussing but Minimal)
+    *   演出は「気持ちいい一手間」に留め、常時ループアニメーションや音の鳴りっぱなしなど、学習の認知負荷を高める「やりすぎ」を徹底して避けます。`prefers-reduced-motion` も尊重します。
+*   **P5: 細部にやさしさを込める** (Micro-kindness)
+    *   エラーの発生やデータの削除など、負の体験になる瞬間こそ、機械的な冷たいテキストを排除し、やさしいマイクロコピーで寄り添います。
 
 ---
 
-## 4. デザイン原則（Design Principles）
+## 3. スコープ (Scope In / Out)
 
-新しい機能・画面で迷ったら、この順で判断する。
-
-1. **P1 — 彼女がニコッとするか？**（Delight優先。機能的正しさより感情価値）
-2. **P2 — 頑張りを見逃さない**（正解・継続・完了は必ずフィードバックする）
-3. **P3 — 片手・3秒で使える**（タップ範囲44px以上、迷わせない）
-4. **P4 — うるさくしない**（演出は"一手間"まで。過剰な点滅・長い音でストレスを与えない。`prefers-reduced-motion` を尊重）
-5. **P5 — やさしさは細部に宿る**（角丸・影・言葉・間、すべてをやわらかく）
-
----
-
-## 5. 対象デバイス / 制約（UI観点）
-
-| 項目 | 方針 |
-|------|------|
-| 最優先デバイス | iPhone / Safari（縦持ち・片手） |
-| セーフエリア | `env(safe-area-inset-*)` を全画面で確保 |
-| タップターゲット | 最小 44×44px |
-| 本文フォント | 最小 16px（ズーム誘発を防ぐため入力欄も16px以上） |
-| コントラスト | 本文テキストは背景に対し WCAG AA（4.5:1）以上を確保。ピンク上の白文字は要検証 |
-| モーション | `prefers-reduced-motion: reduce` で祝福アニメを簡略化 |
-| サウンド | 既定ON、ワンタップでミュート可。iOS Safari のオーディオ解錠制約に対応（[sound-haptics.md](./sound-haptics.md)） |
+*   **Scope In（設計範囲）**:
+    *   デザインコンセプトおよび世界観の定義
+    *   CSS変数（カラー、角丸、影、余白、タイポグラフィ）の定義
+    *   **Atomic Design** に従ったUIコンポーネントの構造化および依存設計
+    *   モチベーション機構（コンボ、ストリーク、お祝い演出）およびマイクロコピーの定義
+    *   サウンド（Web Audio 合成音）・ハプティクス（振動）の演出設計
+*   **Scope Out（設計範囲外）**:
+    *   データベース（SQLite）のスキーマ再設計
+    *   APIエンドポイントのロジック・認証ロジックの変更
+    *   英単語の出題・判定アルゴリズムの変更
 
 ---
 
-## 6. 成功指標（UX KPI）
+## 4. 仕様書リンク一覧
 
-親設計のKPIに加え、体験改善の効果を測る指標を定義する。
+UI/UX設計の各詳細仕様は以下のドキュメントに分割して記述されています。
 
-| 指標 | 目標 | 意図 |
-|------|------|------|
-| 7日継続率（D7 retention） | ベースライン比 +15% | "また開きたい"の実現度 |
-| 1セッションの平均カード数 | +20% | 心地よさによる自然な学習量増 |
-| 正解フィードバックのミュート率 | < 30% | 音演出が"うれしい"設計になっているか |
-| 完了画面の到達率 | > 75% | 最後までやりきりたくなるか |
-
----
-
-## 6.5 設計判断ログ（分析の反映）
-
-`/ux-analyze` の [findings.md](./analysis/findings.md) を受け、設計として確定した判断。
-
-| 分析課題 | 設計判断 | 反映先 |
-|---------|---------|--------|
-| F-1 正解が無反応 | Goodで 音×視覚×言葉を200ms以内に発火（最優先） | [motivation.md](./motivation.md) §2 |
-| F-2/F-3 黒基調・トークン無し | Berryトークンを `:root` に定義し全生値を置換 | [visual-design.md](./visual-design.md) §1,§6 |
-| F-4 完了が締めにならない | コンフェッティ＋サマリー＋マスコットでクライマックス化 | [motivation.md](./motivation.md) §5 |
-| F-5 英語混在・命令的 | UI文言をやさしい応援形へ全面統一（Auto-Play等の英語も） | [motivation.md](./motivation.md) §8 |
-| F-6 Againが罰的（❌＋赤） | 記号を⭕❌から外し、コーラル＋「もういちど」に | [motivation.md](./motivation.md) §2, [visual-design.md](./visual-design.md) §5.2 |
-| F-7 進捗が0始まり | 「完了数」基準に是正し、残り2枚で励ましを出す | [motivation.md](./motivation.md) §3 |
-| F-8 継続の仕掛け無し | ストリーク/継続日数を localStorage で導入（Should） | [motivation.md](./motivation.md) §4,§6 |
-| F-9 Auto-Play設定が主役を食う | 既定は折りたたみ、学習の主役はカードに | [visual-design.md](./visual-design.md) §5.6 |
-| F-10 Atomic未分類 | atoms/molecules/organisms/templates へ再編 | [component-structure.md](./component-structure.md) |
-| F-11 効果音の仕組み無し | `useSound`（Web Audio合成・解錠・ミュート保持）を新設 | [sound-haptics.md](./sound-haptics.md) §3 |
-| F-12 マスコット無し | 軽量🍓を導入（Should） | [visual-design.md](./visual-design.md) §4 |
-
-**確定した実装方針（申し送りへの回答）**
-- 正解音は **Web Audio API 合成**（音源ファイル不要・低遅延）を第一候補とする
-- ストリーク/継続は **localStorage** で保持（サーバー拡張はスコープ外）
-- Could（XP/レベル/カレンダー）は **V1では作らない**（過剰実装防止）
-
----
-
-## 7. このフェーズの進め方（スキル連携）
-
-本仕様は、新設した3スキルで生成・更新する。
-
-```
-/ux-analyze     → 現状UIの課題を分析（spec/design/ux/analysis/）
-      ↓
-/ux-design      → 本仕様（spec/design/ux/*）を設計・更新
-      ↓
-/ux-impl-plan   → 実装計画に落とし込む（spec/impl/ux/）
-      ↓
-/impl <phase>   → 実装
-```
+1.  **[ビジュアルデザイン・デザイントークン仕様](file:///Users/tanakakoushin/Documents/workspace/projects/2026/projects/learning-word/docs/spec/design/ux/visual-design.md)**
+    *   色調・カラーマッピング・タイポグラフィ・余白・角丸の厳密な定義。
+2.  **[コンポーネント構造仕様 (Atomic Design)](file:///Users/tanakakoushin/Documents/workspace/projects/2026/projects/learning-word/docs/spec/design/ux/component-structure.md)**
+    *   Atoms / Molecules / Organisms / Templates / Pages の依存関係と再利用部品の定義。
+3.  **[モチベーション・演出仕様](file:///Users/tanakakoushin/Documents/workspace/projects/2026/projects/learning-word/docs/spec/design/ux/motivation.md)**
+    *   コンボ演出、セッション完了の祝福、ストリーク継続の仕掛け、および温かいマイクロコピー。
+4.  **[サウンド・ハプティクス仕様](file:///Users/tanakakoushin/Documents/workspace/projects/2026/projects/learning-word/docs/spec/design/ux/sound-haptics.md)**
+    *   シンセサイズ効果音の定義とiOS Safari制限対応（AudioContext解錠）。
+5.  **[品質バー・感情曲線仕様](file:///Users/tanakakoushin/Documents/workspace/projects/2026/projects/learning-word/docs/spec/design/ux/quality-bar.md)**
+    *   UX品質基準と、改善後の理想感情曲線。
+6.  **[受け入れ基準・品質ゲート](file:///Users/tanakakoushin/Documents/workspace/projects/2026/projects/learning-word/docs/spec/design/ux/acceptance-criteria.md)**
+    *   実装前にクリアすべき詳細な合格判定条件。

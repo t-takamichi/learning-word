@@ -402,22 +402,22 @@ input:checked + .slider:before {
 }
 
 .luyenTapButton {
-  background-color: #2563EB; /* Bright Blue */
+  background-color: var(--berry-500);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-btn);
   font-size: 1.1rem;
   font-weight: 700;
   padding: 12px 24px;
   width: 100%;
   max-width: 400px;
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+  box-shadow: var(--shadow-soft);
   transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
 .luyenTapButton:hover {
-  background-color: #1D4ED8;
+  background-color: var(--berry-400);
 }
 
 .luyenTapButton:active {

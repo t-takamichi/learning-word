@@ -37,7 +37,7 @@ export function StudyPage(): React.ReactElement | null {
   const [isListVisible, setIsListVisible] = useState(true);
   const [language, setLanguage] = useState<Language>('vi');
   const { activeUser, activeUserId } = useUsers();
-  const { activeWordSet, activeWordSetId } = useWordSets(activeUserId);
+  const { activeWordSet, activeWordSetId, wordSets, selectWordSet } = useWordSets(activeUserId);
 
   const {
     words,
@@ -237,6 +237,19 @@ export function StudyPage(): React.ReactElement | null {
   }
 
   if (isComplete) {
+    const getNextWordSetId = (): number | null => {
+      if (!activeWordSetId || wordSets.length === 0) return null;
+      const curIndex = wordSets.findIndex(s => s.id === activeWordSetId);
+      if (curIndex === -1 || curIndex === wordSets.length - 1) return null;
+      return wordSets[curIndex + 1].id;
+    };
+
+    const nextWordSetId = getNextWordSetId();
+    const handleNextSet = nextWordSetId ? () => {
+      selectWordSet(nextWordSetId);
+      handleRestart();
+    } : undefined;
+
     return (
       <CompleteTemplate
         summary={
@@ -252,6 +265,7 @@ export function StudyPage(): React.ReactElement | null {
               }
             }}
             onNavigateToWordSets={() => navigateTo('/levels')}
+            onNextSet={handleNextSet}
           />
         }
 
@@ -263,13 +277,7 @@ export function StudyPage(): React.ReactElement | null {
             <WordList userId={activeUserId} wordSetId={activeWordSetId} />
           </div>
         }
-        overlay={
-          <CelebrationOverlay
-            active={celebrationActive}
-            variant="complete"
-            onClose={() => setCelebrationActive(false)}
-          />
-        }
+        overlay={null}
       />
     );
   }
@@ -439,9 +447,7 @@ export function StudyPage(): React.ReactElement | null {
         <>
           <CelebrationOverlay
             active={celebrationActive && celebrationVariant === 'combo'}
-            variant="combo"
             comboCount={celebrationComboCount}
-            onClose={() => setCelebrationActive(false)}
           />
           <SuccessToast message={toastMessage} visible={toastVisible} />
         </>

@@ -6,26 +6,25 @@ import { MuteButton } from '../../molecules/MuteButton';
 import styles from './SessionHeader.module.css';
 
 interface Props {
-  current: number;
-  total: number;
-  streak: number;
-  className?: string;
+  readonly current: number;
+  readonly total: number;
+  readonly streak: number;
+  readonly className?: string;
 }
 
-export const SessionHeader = ({
+export function SessionHeader({
   current,
   total,
   streak,
   className = '',
-}: Props): React.ReactElement => {
-  // Mascot mood responds to streak
-  const mascotMood = streak >= 5 ? 'cheer' : streak >= 2 ? 'happy' : 'idle';
+}: Props): React.ReactElement {
+  const mascotExpression = streak >= 2 ? 'happy' : 'standard';
 
   return (
     <header className={`${styles.header} ${className}`.trim()}>
       <div className={styles.topRow}>
         <div className={styles.leftGroup}>
-          <Mascot mood={mascotMood} size={36} />
+          <Mascot expression={mascotExpression} />
           <StreakBadge count={streak} />
         </div>
 
@@ -38,4 +37,4 @@ export const SessionHeader = ({
       </div>
     </header>
   );
-};
+}
