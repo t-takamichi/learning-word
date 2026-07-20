@@ -1,0 +1,41 @@
+.undoButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--ink-700);
+  border: 2px solid var(--berry-200);
+  box-shadow: var(--shadow-soft);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+  padding: 0;
+}
+
+.undoButton:hover:not(:disabled) {
+  transform: scale(1.1);
+  color: var(--berry-600);
+  border-color: var(--berry-500);
+  box-shadow: var(--shadow-pop);
+}
+
+.undoButton:active:not(:disabled) {
+  transform: scale(0.95);
+  box-shadow: var(--shadow-press);
+}
+
+.undoButton:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-color: var(--berry-500);
+}
+
+.undoButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: var(--ink-400);
+  color: var(--ink-400);
+  box-shadow: none;
+}

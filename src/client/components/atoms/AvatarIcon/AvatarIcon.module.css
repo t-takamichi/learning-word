@@ -1,0 +1,41 @@
+.avatarContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+  padding: 0;
+  border: 4px solid var(--berry-100);
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-sizing: border-box;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  transform: scale(1.1);
+  box-shadow: var(--shadow-pop);
+  border-color: var(--berry-500);
+}
+
+.clickable:active {
+  transform: scale(0.95);
+  box-shadow: var(--shadow-press);
+}
+
+.clickable:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-color: var(--berry-500);
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
