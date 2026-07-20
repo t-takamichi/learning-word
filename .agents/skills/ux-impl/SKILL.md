@@ -39,7 +39,7 @@ disable-model-invocation: false
 このスキルを起動したら、まず以下を読み込んでペルソナを確立する。
 
 ```
-.agents/skills/ux-impl/references/agent/persona.md
+.agents/skills/ux-impl/agent/persona.md
 ```
 
 あわせて、実装ルールを**必ず**確認する（実装前チェック必須）。
@@ -70,7 +70,7 @@ docs/spec/design/ux/visual-design.md         ← デザイントークン（生H
 全STEPを通じて以下のルールを守ること。
 
 ```
-.agents/skills/ux-impl/references/rules/impl-rules.md
+.agents/skills/ux-impl/rules/impl-rules.md
 ```
 
 ## 完了条件
@@ -78,7 +78,7 @@ docs/spec/design/ux/visual-design.md         ← デザイントークン（生H
 STEP 3 終了後、以下の品質ゲートを実行して全項目パスを確認する。
 
 ```
-.agents/skills/ux-impl/references/rules/quality-gate.md
+.agents/skills/ux-impl/rules/quality-gate.md
 ```
 
 全項目チェック済みになったら「UX-<N> 実装完了」を宣言し、次のフェーズを案内する。

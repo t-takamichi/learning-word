@@ -23,7 +23,7 @@ Atomic Design の階層（Tokens→Atoms→…→Pages）を実装順序に、
 ## Agent
 起動したら、まず以下を読み込んでペルソナを確立する。
 ```
-.agents/skills/ux-impl-plan/references/agent/persona.md
+.agents/skills/ux-impl-plan/agent/persona.md
 ```
 
 ## 入力
@@ -50,13 +50,13 @@ Atomic Design の階層（Tokens→Atoms→…→Pages）を実装順序に、
 ## Rules
 全STEPで以下を守る。
 ```
-.agents/skills/ux-impl-plan/references/rules/plan-rules.md
+.agents/skills/ux-impl-plan/rules/plan-rules.md
 ```
 
 ## 完了条件
 STEP5後、品質ゲートで全項目パスを確認する。
 ```
-.agents/skills/ux-impl-plan/references/rules/quality-gate.md
+.agents/skills/ux-impl-plan/rules/quality-gate.md
 ```
 全項目パスで「UI/UX実装計画完了」を宣言し、次を案内する。
 ```
