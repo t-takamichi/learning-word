@@ -155,7 +155,15 @@ export function StudyPage(): React.ReactElement | null {
     setCelebrationActive(true);
   };
 
+  // Stop playing any active TTS speech immediately when the current card index changes.
+  useEffect(() => {
+    speech.cancel();
+  }, [currentIndex, speech]);
+
   const handleGood = (): void => {
+    // 0. Cancel active speech from previous card or example
+    speech.cancel();
+
     // 1. Audio
     play('correct');
 
@@ -194,6 +202,9 @@ export function StudyPage(): React.ReactElement | null {
   };
 
   const handleAgain = (): void => {
+    // 0. Cancel active speech from previous card or example
+    speech.cancel();
+
     // 1. Audio
     play('again');
 
@@ -212,6 +223,9 @@ export function StudyPage(): React.ReactElement | null {
   };
 
   const handleUndo = (): void => {
+    // 0. Cancel active speech from previous card or example
+    speech.cancel();
+
     play('undo');
     undo();
     setStreak((prev) => Math.max(0, prev - 1));
