@@ -36,6 +36,7 @@
     "start": "tsx src/server/index.ts",
     "typecheck": "tsc --noEmit",
     "setup:piper": "bash scripts/setup-piper.sh",
-    "db:reset": "npx tsx scripts/reset-db.ts"
+    "db:reset": "npx tsx scripts/reset-db.ts",
+    "db:migrate": "npx tsx scripts/migrate.ts"
   }
 }

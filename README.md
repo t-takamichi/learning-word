@@ -25,8 +25,9 @@ learning-word/
 │   ├── server/        # Hono バックエンド（routes/usecases/repositories/services）
 │   └── shared/         # フロント・バック共有の型定義
 ├── storage/              # 実行時データ・DBソースをまとめた親ディレクトリ
-│   ├── db/                    # テーブル定義・シードデータ（git管理対象）
-│   │   ├── schema.sql            # テーブル定義（起動時に自動実行）
+│   ├── db/                    # マイグレーション・シードデータ（git管理対象）
+│   │   ├── migrations/           # 番号付きマイグレーションSQL（未適用分を起動時に順次適用）
+│   │   │   └── 0001_baseline.sql   # ベースラインスキーマ
 │   │   ├── seed.json              # 単語セットの初期データ（初回起動時に自動投入）
 │   │   └── dictionary_seed.json   # 辞書オートコンプリート用データ（初回起動時に自動投入）
 │   ├── data/                  # 実行時生成物（.gitignore 対象）
@@ -35,7 +36,8 @@ learning-word/
 │   └── bin/                   # Piperスタンドアロンバイナリ（setup:piper で取得、.gitignore 対象）
 ├── scripts/
 │   ├── setup-piper.sh          # Piper TTSの実行環境をセットアップ
-│   ├── reset-db.ts             # DBリセット
+│   ├── migrate.ts              # 未適用マイグレーションの適用（データ保持）
+│   ├── reset-db.ts             # DBリセット（全消し→再構築）
 │   └── generate-dictionary-seed.ts
 └── docs/spec/                # 設計・実装計画ドキュメント
 ```
@@ -74,11 +76,20 @@ Hono サーバーが `dist/client` を静的配信し、API (`/api/*`) も同一
 
 ## データベース
 
-- 起動時に `storage/db/schema.sql` を自動実行（`CREATE TABLE IF NOT EXISTS` なのでべき等）
+- 起動時に `storage/db/migrations/` 配下の**未適用マイグレーションだけ**を番号順に適用する（適用済みバージョンは `schema_migrations` テーブルで管理）。既存データを消さずにスキーマを更新できる
 - `word_sets` テーブルが空の場合のみ `storage/db/seed.json` を自動投入
 - `dictionary_words` テーブルが空の場合のみ `storage/db/dictionary_seed.json` を自動投入
-- WALモード有効（`PRAGMA journal_mode = WAL`）、外部キー制約有効
+- WALモード有効（`PRAGMA journal_mode = WAL`）、外部キー制約有効（接続確立時に設定）
 - `storage/data/` ディレクトリは `.gitignore` 対象。本番環境では永続ボリュームにマウントするか、デプロイ先で書き込み可能なパスを `DB_PATH` で指定すること
+
+### マイグレーションの追加手順
+
+1. `storage/db/migrations/` に `0002_<説明>.sql` のように**連番プレフィックス付き**のSQLファイルを作成する（既存ファイルは編集しない。追記のみ・べき等を推奨）
+2. 各ファイルは1つのトランザクションで実行され、成功時に `schema_migrations` へ記録される。以降の起動・`yarn db:migrate` では未適用分だけが適用される
+3. 本番デプロイ時は `yarn db:migrate`（データ保持したままスキーマ更新）を実行する。`yarn db:reset` は**全データを削除**して作り直すため、開発時のみ使用する
+4. PRAGMA（`journal_mode` 等）はマイグレーションSQLに書かない（接続時に適用済み。`journal_mode` はトランザクション内で変更できない）
+
+> マイグレーション導入前に作られた既存DB（`schema_migrations` を持たない）は、初回適用時に不足カラム（`role` / `created_by` 等）を自動追記してからベースラインを記録する後方互換処理が入る。
 
 ## Piper TTS（音声合成）
 
@@ -125,4 +136,5 @@ yarn test:e2e      # または npx playwright test
 | `yarn test:e2e` | E2E シミュレーションテスト実行（Playwright） |
 | `yarn typecheck` | `tsc --noEmit` |
 | `yarn setup:piper` | Piper TTSバイナリ・音声モデルを取得 |
-| `yarn db:reset` | DBリセット（`scripts/reset-db.ts`） |
+| `yarn db:migrate` | 未適用マイグレーションを適用（データ保持、`scripts/migrate.ts`） |
+| `yarn db:reset` | DBを全消し→再構築（`scripts/reset-db.ts`、開発用） |

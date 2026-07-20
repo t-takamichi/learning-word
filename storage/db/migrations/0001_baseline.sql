@@ -1,5 +1,6 @@
-PRAGMA journal_mode = WAL;
-PRAGMA foreign_keys = ON;
+-- 0001_baseline: 既存スキーマのベースライン
+-- すべて IF NOT EXISTS のため、マイグレーション導入前の既存DBに再適用しても安全（べき等）。
+-- PRAGMA（journal_mode / foreign_keys）は接続確立時に設定するため、ここには含めない。
 
 -- 1. ユーザーテーブル (複数ユーザー対応)
 CREATE TABLE IF NOT EXISTS users (
@@ -72,3 +73,6 @@ CREATE TABLE IF NOT EXISTS dictionary_words (
 );
 
 CREATE INDEX IF NOT EXISTS idx_dictionary_words_english ON dictionary_words(english);
+
+-- users(token) の UNIQUE インデックス（旧DBの後方互換保険。列定義の UNIQUE と重複しても IF NOT EXISTS で安全）
+CREATE UNIQUE INDEX IF NOT EXISTS idx_users_token ON users(token);
