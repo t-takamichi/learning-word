@@ -18,12 +18,16 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@vitejs/plugin-react": "^4",
+    "@testing-library/react": "^16",
     "concurrently": "^9",
+    "happy-dom": "^15",
     "tsx": "^4",
     "typescript": "^5",
-    "vite": "^5"
+    "vite": "^5",
+    "vitest": "^2"
   },
   "scripts": {
+    "test": "vitest run",
     "dev": "concurrently \"yarn server\" \"vite\"",
     "server": "tsx watch src/server/index.ts",
     "build": "vite build",
