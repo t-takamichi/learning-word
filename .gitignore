@@ -4,3 +4,5 @@ storage/bin/
 storage/data/
 *.db
 .env
+test-results/
+playwright-report/
