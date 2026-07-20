@@ -1,6 +1,6 @@
 # コンポーネント別 実装・移行タスクマップ
 
-本ドキュメントは、既存コンポーネントの構造化、および新規演出パーツの実装に際し、各コンポーネントを「新規 / 移行 / 置換」の3分類に整理し、実装の順序と依存関係を定義したマップです。
+本ドキュメントは、既存コンポーネントの構造化、および新規演出・機能パーツの実装に際し、各コンポーネントを「新規 / 移行 / 置換」の3分類に整理し、実装の順序と依存関係を定義したマップです。
 
 ---
 
@@ -16,19 +16,23 @@
 | **Mascot** | Atoms | 新規 | なし | `components/atoms/Mascot` | なし | `expression: 'standard' \| 'happy' \| 'sad'` |
 | **Sparkle** | Atoms | 新規 | なし | `components/atoms/Sparkle` | なし | `active: boolean` |
 | **SoundToggle** | Atoms | 新規 | なし | `components/atoms/SoundToggle` | なし | `muted: boolean`, `onToggle: () => void` |
+| **AvatarIcon** | Atoms | 新規 | なし | `components/atoms/AvatarIcon` | なし | `src: string`, `alt: string`, `size?: number` |
+| **UndoButton** | Atoms | 新規 | なし | `components/atoms/UndoButton` | `Button` | `onClick: () => void`, `disabled?: boolean` |
 | **AudioButton** | Molecules | 移行 | `components/molecules/AudioButton` | `components/molecules/AudioButton` | `Button` | `word: string`, `onPlay?: () => void` |
 | **LanguageToggle** | Molecules | 移行 | `components/molecules/LanguageToggle` | `components/molecules/LanguageToggle` | `Button` | `value: 'vi' \| 'ja'`, `onChange: (val: 'vi' \| 'ja') => void` |
 | **ReviewButtons** | Molecules | 移行 | `components/molecules/ReviewButtons` | `components/molecules/ReviewButtons` | `Button` | `onGood: () => void`, `onAgain: () => void`, `disabled?: boolean` |
 | **ProgressIndicator** | Molecules | 移行 | `components/molecules/ProgressIndicator` | `components/molecules/ProgressIndicator` | `Text` | `current: number`, `total: number` |
 | **SuccessToast** | Molecules | 新規 | なし | `components/molecules/SuccessToast` | `Text` | `message: string`, `visible: boolean` |
+| **UserProfileCard** | Molecules | 新規 | なし | `components/molecules/UserProfileCard` | `AvatarIcon`, `Text` | `name: string`, `avatarSrc: string`, `onClick: () => void` |
 | **WordListItem** | Molecules | 置換 | `components/molecules/WordListItem` | `components/molecules/WordListItem` | `AudioButton` | `word`, `userId`, `onEdit`, `onDelete` |
 | **WordSetCard** | Molecules | 置換 | `components/molecules/WordSetCard` | `components/molecules/WordSetCard` | `Text` | `wordSet`, `onSelect`, `activeUserId`, `onEdit`, `onDelete` |
-| **FlashCard** | Organisms | 置換 | `components/organisms/FlashCard` | `components/organisms/FlashCard` | `Text`, `AudioButton` | `word`, `isAnswerVisible`, `onFlip`, `onSpeak` |
+| **FlashCard** | Organisms | 置換 | `components/organisms/FlashCard` | `components/organisms/FlashCard` | `Text`, `AudioButton`, `UndoButton` | `word`, `isAnswerVisible`, `onFlip`, `onSpeak`, `onUndo` (新規) |
 | **WordList** | Organisms | 置換 | `components/organisms/WordList` | `components/organisms/WordList` | `WordListItem`, `SuccessToast` | `userId`, `wordSetId`, `onRefetchTrigger` |
 | **SessionHeader** | Organisms | 置換 | `components/organisms/SessionHeader` | `components/organisms/SessionHeader` | `ProgressIndicator`, `SoundToggle` | `current`, `total`, `muted`, `onMuteToggle` |
-| **CelebrationOverlay** | Organisms | 新規 | なし | `components/organisms/CelebrationOverlay` | `Mascot`, `Sparkle` | `active: boolean`, `comboCount: number` |
+| **CelebrationOverlay** | Organisms | 置換 | `components/organisms/CelebrationOverlay` | `components/organisms/CelebrationOverlay` | `Mascot`, `Sparkle` | `active: boolean`, `comboCount: number` (※非ブロッキング化) |
 | **WordSetSelector** | Organisms | 置換 | `components/organisms/WordSetSelector` | `components/organisms/WordSetSelector` | `WordSetCard` | `wordSets`, `onSelect`, `activeUserId`, `onCreate`, `onEdit`, `onDelete` |
-| **CompleteSummary** | Organisms | 置換 | `components/organisms/CompleteSummary` | `components/organisms/CompleteSummary` | `Mascot`, `Button` | `streak`, `correctCount`, `onRestart`, `onBackToHome` |
+| **CompleteSummary** | Organisms | 置換 | `components/organisms/CompleteSummary` | `components/organisms/CompleteSummary` | `Mascot`, `Button` | `streak`, `correctCount`, `onRestart`, `onBackToHome`, `onNextSet?` (新規) |
+| **UserSelector** | Organisms | 置換 | `components/organisms/UserSelector` | `components/organisms/UserSelector` | `UserProfileCard`, `Button` | `users: User[]`, `onSelect: (user: User) => void`, `onCreate: () => void` (※アバター簡単選択リスト化) |
 
 ---
 
@@ -38,9 +42,9 @@
 
 1.  **新規ディレクトリの生成**:
     `src/client/components/atoms`, `molecules`, `organisms`, `templates` フォルダを作成します。
-2.  **純粋コンポーネント（Atoms / Molecules）の移動**:
-    依存のない `Button.tsx` や `Text.tsx` などを移動し、CSS モジュール名や相対インポートパスを修正します。
+2.  **純粋コンポーネント（Atoms / Molecules）の移動と新設**:
+    依存のない `Button.tsx` や `Text.tsx` を移動させるとともに、新規に定義された `AvatarIcon` や `UndoButton` を新設し、CSS モジュール名や相対インポートパスを修正します。
 3.  **Page エントリーポイントの import パス一括置換**:
     `src/client/pages/StudyPage.tsx` や `WordSetSelectPage.tsx` で import しているパスを一括して新しい Atomic Design 階層（例: `../../components/organisms/FlashCard`）に書き換えます。
 4.  **移行の検証**:
-    移動するたびに `yarn typecheck` を走らせ、TypeScript のインポートエラーが 0 件であることを確認します。
+    移動や新設をするたびに型チェックを走らせ、TypeScript のインポートエラーが 0 件であることを確認します。

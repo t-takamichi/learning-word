@@ -31,25 +31,29 @@ graph TD
     *   `Mascot`: ベリーちゃんの表情（`standard`, `happy`, `sad`）を絵文字やイラストでレンダリングする。
     *   `Sparkle`: 正解時に舞うキラキラエフェクト。
     *   `SoundToggle`: 音声オン/オフの状態を示すスイッチ。
+    *   `AvatarIcon` (新規): 各アカウントの丸型アバター（🍓や🍎など）を表示する画像パーツ。ホバー時にぷっくり浮き出るスケール変化を持つ。
+    *   `UndoButton` (新規): 誤判定の取り消し・巻き戻しを行うための小さな矢印型ボタン。他のボタンの邪魔にならないよう上品に配置。
 
 ### 2.2. Molecules (複合パーツ)
 *   **役割**: 複数の Atoms を組み合わせ、特定の意味や簡単な機能を持たせた部品。依然として「Pure Components」（Props で制御され、ドメイン状態を持たない）である。
 *   **主なコンポーネント**:
-    *   `AudioButton`: 発音再生ボタン。内部で発音ロジック（TTS）は直接呼ばず、発音トリガーイベントのみを発火する。
+    *   `AudioButton`: 発音再生ボタン。内部で発音ロジック（TTS API）は直接呼ばず、発音トリガーイベントのみを発火する。
     *   `ReviewButtons`: 「Good」と「Again」を並べた回答ボタンセット。
     *   `ProgressIndicator`: 学習の進捗（すすんだ割合）を表示するバー。
     *   `StreakBadge`: 継続日数を炎の絵文字とともに表示するバッジ。
     *   `SuccessToast`: 操作成功を伝える一時的なトースト表示。
     *   `WordSetCard`: レベル別のセットカード。進捗率を内部で計算するが、Props として進捗データを受け取る。
+    *   `UserProfileCard` (新規): `AvatarIcon` と `Text`（おなまえ）を縦に並べた選択用カード。タップエリア44px以上を担保し、フォーカス時に `--focus-ring` を適用。
 
 ### 2.3. Organisms (画面ブロック)
 *   **役割**: 複数の Molecules / Atoms を組み合わせた画面の主要領域。この階層から、**React Query などのドメイン状態や API 接続、Context** との結線が許容される。
 *   **主なコンポーネント**:
-    *   `FlashCard`: カードを「めくる」ジェスチャーやキーボード操作、めくる状態（表面/裏面）を管理する。
+    *   `FlashCard`: カードを「めくる」ジェスチャーやキーボード操作、めくる状態（表面/裏面）を管理する。内部に `UndoButton` を包含する。
     *   `WordList`: ページネーション付きの単語一覧テーブル、追加・編集フォームモーダルを制御する。
     *   `SessionHeader`: セッション全体の進行状態や、ミュート切り替え等のナビゲーションヘッダー。
-    *   `CelebrationOverlay`: 連続正解時に全画面にキラキラを降らせるお祝いエフェクト。
+    *   `CelebrationOverlay`: 連続正解時に全画面にキラキラを降らせるお祝いエフェクト（学習操作をロックしない非ブロッキング仕様）。
     *   `WordSetSelector`: タブの切り替えと単語セット一覧カードの表示を制御する。
+    *   `UserSelector` (リファクタリング): アカウントの手入力ログインを排除し、`UserProfileCard` をタイル状に並べたクイックアバター選択パネル。新規追加用の「＋」カードも含む。
 
 ### 2.4. Templates (レイアウト骨組み)
 *   **役割**: 画面のグリッドやヘッダー・メインコンテンツ・フッターなどのレイアウト構造のみを定義する。プレースホルダー（`children`）の配置に特化する。
@@ -92,9 +96,11 @@ src/client/components/
 |:---|:---|:---|:---|
 | `Button` | `atoms/Button` | **Atoms** | 既存実装を維持。生HEXの排除を徹底。 |
 | `AudioButton` | `molecules/AudioButton` | **Molecules** | 発音ロジック（TTS API）をコンポーネント内で直接呼び出さず、`onPlay` コールバックを親（Organism/Page）から受け取る形に整理。 |
-| `FlashCard` | `organisms/FlashCard` | **Organisms** | カードが裏返る際の効果音の呼び出しは、`props.onFlip` を通じて親から呼び出すようフックと分離。 |
+| `FlashCard` | `organisms/FlashCard` | **Organisms** | カードが裏返る際の効果音の呼び出しは、`props.onFlip` を通じて親から呼び出すようフックと分離。左上の隅に `UndoButton` を組み込む。 |
 | `WordList` | `organisms/WordList` | **Organisms** | 単語のCRUD操作（API呼び出し、トースト表示）は、`useWords` フックをこの Organism で呼び出す設計を維持。 |
 | `WordSetCard` | `molecules/WordSetCard` | **Molecules** | 編集・削除イベントを `onEdit`, `onDelete` として Props 抽出し、純粋な見た目部品（Pure）として維持。 |
+| `UserSelector` | `organisms/UserSelector` | **Organisms** | 既存の手入力フォームを廃止。アバター画像タイルを表示するクイックプロフィールスイッチャーへ完全リプレイス。 |
+
 
 ---
 
