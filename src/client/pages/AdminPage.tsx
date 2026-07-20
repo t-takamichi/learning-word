@@ -136,8 +136,8 @@ function AddWordForm({ creds }: AddWordFormProps) {
     e.preventDefault();
     setErrorMsg(null);
 
-    if (!english.trim() || !vietnamese.trim() || !japanese.trim()) {
-      setErrorMsg('english / vietnamese / japanese は必須項目です');
+    if (!english.trim() || (!vietnamese.trim() && !japanese.trim())) {
+      setErrorMsg('英単語、およびベトナム語/日本語訳のいずれか片方は必須項目です');
       return;
     }
 
@@ -347,8 +347,8 @@ function WordRow({ word, creds }: WordRowProps) {
     e.preventDefault();
     setErrorMsg(null);
 
-    if (!english.trim() || !vietnamese.trim() || !japanese.trim()) {
-      setErrorMsg('english / vietnamese / japanese は必須項目です');
+    if (!english.trim() || (!vietnamese.trim() && !japanese.trim())) {
+      setErrorMsg('英単語、およびベトナム語/日本語訳のいずれか片方は必須項目です');
       return;
     }
 

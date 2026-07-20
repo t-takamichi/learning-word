@@ -173,8 +173,8 @@ export const WordList = ({ userId, wordSetId, page: initialPage = 1, onRefetchTr
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError(null);
-    if (!formData.english.trim() || !formData.vietnamese.trim() || !formData.japanese.trim()) {
-      setFormError('英単語、ベトナム語訳、日本語訳は必須です');
+    if (!formData.english.trim() || (!formData.vietnamese.trim() && !formData.japanese.trim())) {
+      setFormError('英単語、およびベトナム語訳/日本語訳のいずれか片方は必須です');
       return;
     }
 
