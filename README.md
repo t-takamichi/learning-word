@@ -93,6 +93,24 @@ Hono サーバーが `dist/client` を静的配信し、API (`/api/*`) も同一
 
 `/api/admin/*` は Basic認証必須（`ADMIN_USER` / `ADMIN_PASS`）。Basic認証は平文送信のため、**本番環境ではHTTPS必須**（TLS終端はnginx等のリバースプロキシを前提、`docs/spec/design/risks.md` R8参照）。
 
+## テスト実行
+
+本プロジェクトは Vitest による単体テストおよび Playwright による実機 E2E テスト環境を整備しています。
+
+### 単体テスト (Vitest)
+クライアント・フック・ライブラリ・コンポーネントの単体テスト（異常系・通信障害・片方訳語のみ描画テスト含む 29ケース）を実行します。
+
+```bash
+yarn test          # または npx vitest run
+```
+
+### E2E テスト (Playwright)
+Chromium および Mobile Safari (iPhone 13 実機解像度) 上で、新規登録・音声解錠・スワイプ・Undo・交代ログインなどのユーザーシナリオテストを実行します。
+
+```bash
+yarn test:e2e      # または npx playwright test
+```
+
 ---
 
 ## スクリプト一覧
@@ -103,6 +121,8 @@ Hono サーバーが `dist/client` を静的配信し、API (`/api/*`) も同一
 | `yarn server` | APIサーバーのみ起動（`tsx watch`） |
 | `yarn build` | フロントエンドを `dist/client` にビルド |
 | `yarn start` | 本番起動（ビルド済み前提） |
+| `yarn test` | 単体テスト実行（Vitest 全29ケース） |
+| `yarn test:e2e` | E2E シミュレーションテスト実行（Playwright） |
 | `yarn typecheck` | `tsc --noEmit` |
 | `yarn setup:piper` | Piper TTSバイナリ・音声モデルを取得 |
 | `yarn db:reset` | DBリセット（`scripts/reset-db.ts`） |
