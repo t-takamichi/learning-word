@@ -36,7 +36,7 @@
 }
 
 .errorText {
-  color: #E5484D;
+  color: var(--coral-500);
   line-height: 1.6;
 }
 
@@ -442,3 +442,71 @@ input:checked + .slider:before {
   color: var(--berry-600);
   border-color: var(--berry-300);
 }
+
+/* Audio unlock screen styles */
+.unlockOverlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  border: 2px solid var(--berry-100);
+  border-radius: var(--radius-card);
+  padding: 48px 32px;
+  box-shadow: var(--shadow-pop);
+  text-align: center;
+  gap: 24px;
+  width: 100%;
+  max-width: 440px;
+  margin: 40px auto;
+  box-sizing: border-box;
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.unlockTitle {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--berry-500);
+  margin: 0;
+}
+
+.unlockText {
+  color: var(--ink-700);
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.unlockBtn {
+  background-color: var(--berry-500);
+  color: var(--surface);
+  border: none;
+  font-weight: 800;
+  font-size: 18px;
+  border-radius: var(--radius-btn);
+  padding: 16px 32px;
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 280px;
+}
+
+.unlockBtn:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-pop);
+}
+
+.unlockBtn:active {
+  transform: scale(0.96);
+  box-shadow: var(--shadow-press);
+}
+
+.unlockBtn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+

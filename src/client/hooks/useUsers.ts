@@ -2,11 +2,6 @@ import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import { authedFetch } from '../lib/authedFetch';
 
-interface User {
-  id: number;
-  username: string;
-}
-
 // Read synchronously so the value is correct on the very first render. Hydrating
 // via useEffect leaves a window where these are null, which makes route guards
 // (e.g. WordSetSelectPage) redirect to /users before the real user is restored.

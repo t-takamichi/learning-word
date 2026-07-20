@@ -1,29 +1,32 @@
 .overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(74, 44, 58, 0.4); /* --ink-900 with alpha */
+  top: auto;
+  left: auto;
+  right: 24px;
+  bottom: 24px;
+  background-color: transparent;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-end;
+  justify-content: flex-end;
   z-index: 1000;
+  pointer-events: none;
   animation: fadeIn 0.2s ease-out forwards;
 }
 
 .content {
   background: var(--surface);
-  padding: 32px 48px;
+  padding: 16px 24px;
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-pop);
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   gap: 16px;
-  text-align: center;
+  text-align: left;
   position: relative;
-  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  border: 2px solid var(--berry-200);
+  pointer-events: none;
+  animation: slideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 .sparkleBg {
@@ -38,20 +41,22 @@
 .textGroup {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 2px;
 }
 
 .comboTitle {
-  font-size: 2.25rem !important;
+  font-size: 1.75rem !important;
   color: var(--berry-600);
   font-weight: 900;
   margin: 0;
+  line-height: 1.2;
 }
 
 .comboSub {
   color: var(--ink-700);
   font-weight: 700;
   margin: 0;
+  font-size: 13px;
 }
 
 @keyframes fadeIn {
@@ -59,9 +64,9 @@
   to { opacity: 1; }
 }
 
-@keyframes popIn {
-  from { transform: scale(0.85); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+@keyframes slideIn {
+  from { transform: translateY(100px) scale(0.9); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {

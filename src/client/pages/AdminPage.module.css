@@ -69,13 +69,13 @@
 }
 
 .authError {
-  color: #E5484D;
+  color: var(--coral-500);
   font-size: 13px;
   margin: 0 0 20px 0;
-  background: rgba(229, 72, 77, 0.08);
+  background: rgba(255, 122, 107, 0.08);
   padding: 8px 12px;
   border-radius: var(--radius-btn);
-  border: 1px solid rgba(229, 72, 77, 0.15);
+  border: 1px solid rgba(255, 122, 107, 0.15);
 }
 
 .formGroup {
@@ -181,7 +181,7 @@
 }
 
 .error {
-  color: #E5484D;
+  color: var(--coral-500);
   font-size: 13px;
   margin-bottom: 16px;
 }
@@ -368,7 +368,7 @@
 .confirmDeleteButton {
   flex: 1;
   min-height: 44px;
-  background: #E5484D;
+  background: var(--coral-500);
   border: none;
   border-radius: var(--radius-btn);
   color: #FFFFFF;
@@ -455,27 +455,27 @@
 }
 
 .badgeBasic {
-  background: rgba(46, 160, 67, 0.12);
-  color: #2ea043;
-  border: 1px solid rgba(46, 160, 67, 0.2);
+  background: var(--mint-100);
+  color: var(--mint-500);
+  border: 1px solid rgba(63, 199, 160, 0.2);
 }
 
 .badgeIntermediate {
-  background: rgba(56, 139, 253, 0.12);
-  color: #388bfd;
-  border: 1px solid rgba(56, 139, 253, 0.2);
+  background: var(--berry-100);
+  color: var(--berry-500);
+  border: 1px solid rgba(255, 111, 165, 0.2);
 }
 
 .badgeAdvanced {
-  background: rgba(187, 128, 255, 0.12);
-  color: #bb80ff;
-  border: 1px solid rgba(187, 128, 255, 0.2);
+  background: rgba(182, 156, 255, 0.12);
+  color: var(--lavender-500);
+  border: 1px solid rgba(182, 156, 255, 0.2);
 }
 
 .badgeUnknown {
-  background: rgba(139, 148, 158, 0.12);
-  color: #8b949e;
-  border: 1px solid rgba(139, 148, 158, 0.2);
+  background: rgba(110, 85, 97, 0.12);
+  color: var(--ink-700);
+  border: 1px solid rgba(110, 85, 97, 0.2);
 }
 
 /* Filter Section */

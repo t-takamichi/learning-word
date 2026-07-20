@@ -76,7 +76,7 @@ const wobble = (freq: number): number => {
   return freq + (Math.random() - 0.5) * 8; // ±4Hz fluctuation
 };
 
-export type SFXId = 'correct' | 'combo' | 'again' | 'flip' | 'complete' | 'tap';
+export type SFXId = 'correct' | 'combo' | 'again' | 'flip' | 'complete' | 'tap' | 'undo';
 
 /**
  * Synthesizes and plays a sound effect using Web Audio API oscillators.
@@ -233,6 +233,25 @@ export const playSFX = (id: SFXId, volume = 0.35): void => {
 
       osc.start(now);
       osc.stop(now + 0.03);
+      break;
+    }
+    case 'undo': {
+      // A quick 200Hz -> 600Hz sweep for undoing actions
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(wobble(200), now);
+      osc.frequency.exponentialRampToValueAtTime(wobble(600), now + 0.12);
+
+      gain.gain.setValueAtTime(0.6, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+      osc.connect(gain);
+      gain.connect(masterGain);
+
+      osc.start(now);
+      osc.stop(now + 0.12);
       break;
     }
   }

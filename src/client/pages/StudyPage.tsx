@@ -36,7 +36,7 @@ export function StudyPage(): React.ReactElement | null {
   const [mode, setMode] = useState<'list' | 'study'>('list');
   const [isListVisible, setIsListVisible] = useState(true);
   const [language, setLanguage] = useState<Language>('vi');
-  const { activeUser, activeUserId } = useUsers();
+  const { activeUser, activeUserId, clearActiveUser } = useUsers();
   const { activeWordSet, activeWordSetId, wordSets, selectWordSet } = useWordSets(activeUserId);
 
   const {
@@ -47,13 +47,20 @@ export function StudyPage(): React.ReactElement | null {
     isLoading,
     error,
     isSubmitting,
+    canUndo,
     showAnswer,
     submitReview,
     restart,
+    undo,
   } = useSession(activeUserId, activeWordSetId);
 
   const speech = useSpeech();
   const { play, unlock, isUnlocked } = useSound();
+  const [audioLocked, setAudioLocked] = useState(true);
+
+  useEffect(() => {
+    setAudioLocked(!isUnlocked());
+  }, [isUnlocked]);
 
   // Local stats for gamification
   const [streak, setStreak] = useState(0);
@@ -204,12 +211,25 @@ export function StudyPage(): React.ReactElement | null {
     submitReview('again');
   };
 
+  const handleUndo = (): void => {
+    play('undo');
+    undo();
+    setStreak((prev) => Math.max(0, prev - 1));
+    setCorrectCount((prev) => Math.max(0, prev - 1));
+  };
+
   const handleRestart = (): void => {
     setStreak(0);
     setCorrectCount(0);
     setBestCombo(0);
     setCelebrationActive(false);
     restart();
+  };
+
+  const handleNavigateToUsers = (): void => {
+    play('tap');
+    clearActiveUser();
+    navigateTo('/users');
   };
 
   if (isLoading) {
@@ -265,6 +285,7 @@ export function StudyPage(): React.ReactElement | null {
               }
             }}
             onNavigateToWordSets={() => navigateTo('/levels')}
+            onNavigateToUsers={handleNavigateToUsers}
             onNextSet={handleNextSet}
           />
         }
@@ -374,10 +395,6 @@ export function StudyPage(): React.ReactElement | null {
               <span className={`${styles.slider} ${styles.round}`}></span>
             </label>
           </div>
-          <div className={styles.controlIcons}>
-            <button className={styles.iconButton} aria-label="Shuffle">⇄</button>
-            <button className={styles.iconButton} aria-label="Play all">▶</button>
-          </div>
         </div>
 
         {/* 単語リスト */}
@@ -391,6 +408,32 @@ export function StudyPage(): React.ReactElement | null {
         <div className={styles.fixedFooter}>
           <button onClick={handleStartStudy} className={styles.luyenTapButton}>
             {uiText[language].studyButton}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (mode === 'study' && audioLocked) {
+    return (
+      <div className={styles.centered}>
+        <div className={styles.unlockOverlay}>
+          <div style={{ fontSize: '48px' }}>🍓</div>
+          <h2 className={styles.unlockTitle}>学習をスタート！</h2>
+          <p className={styles.unlockText}>
+            タップすると、ベリーちゃんのこえや<br />
+            せいかいの効果音がながれるよ♪
+          </p>
+          <button
+            type="button"
+            className={styles.unlockBtn}
+            onClick={() => {
+              unlock();
+              setAudioLocked(false);
+              play('tap');
+            }}
+          >
+            スタート！🍓
           </button>
         </div>
       </div>
@@ -430,6 +473,8 @@ export function StudyPage(): React.ReactElement | null {
           onAgain={handleAgain}
           isSubmitting={isSubmitting}
           bounceTrigger={bounceTrigger}
+          onUndo={handleUndo}
+          canUndo={canUndo}
         />
       }
       autoPlay={

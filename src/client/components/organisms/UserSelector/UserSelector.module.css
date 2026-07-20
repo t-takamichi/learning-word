@@ -69,9 +69,10 @@
   outline: none;
 }
 
-.input:focus {
+.input:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
   border-color: var(--berry-500);
-  box-shadow: 0 0 0 4px var(--berry-100);
 }
 
 .inputHint {

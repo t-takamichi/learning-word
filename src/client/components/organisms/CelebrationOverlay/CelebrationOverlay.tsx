@@ -17,7 +17,7 @@ export function CelebrationOverlay({ active, comboCount }: Props): React.ReactEl
       setShouldRender(true);
       const timer = setTimeout(() => {
         setShouldRender(false);
-      }, 2400); // Auto-hide after 2.4s (under 2.5s constraint)
+      }, 2400); // Auto-hide after 2.4s
       return () => clearTimeout(timer);
     }
   }, [active]);
@@ -25,7 +25,7 @@ export function CelebrationOverlay({ active, comboCount }: Props): React.ReactEl
   if (!shouldRender) return null;
 
   return (
-    <div className={styles.overlay} role="dialog" aria-modal="true">
+    <div className={styles.overlay} aria-live="polite">
       <div className={styles.content}>
         <div className={styles.sparkleBg}>
           <Sparkle active={active} />

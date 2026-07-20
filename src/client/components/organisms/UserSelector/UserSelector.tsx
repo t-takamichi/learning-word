@@ -27,7 +27,7 @@ export function UserSelector({ activeUser, onLogin, onRegister, onLogout, onDele
     const trimmedPin = pin.trim();
 
     if (!trimmedUser) {
-      setError('おなまえが空っぽだよ🍓');
+      setError('おなまえを入力してね🍓');
       return;
     }
     if (!trimmedPin) {
@@ -194,7 +194,7 @@ export function UserSelector({ activeUser, onLogin, onRegister, onLogout, onDele
         </div>
 
         <div className={styles.formGroup}>
-          <label className={styles.label}>合言葉 (PIN)</label>
+          <label className={styles.label}>合言葉 (PIN / パスワード)</label>
           <input 
             type="password" 
             className={styles.input} 
@@ -207,14 +207,14 @@ export function UserSelector({ activeUser, onLogin, onRegister, onLogout, onDele
             disabled={loading}
           />
           {tab === 'register' && (
-            <p className={styles.inputHint}>※ 他の人に見られない合言葉（パスワード）を決めてね</p>
+            <p className={styles.inputHint}>※ 他の人に見られない合言葉（英数字パスワード）を決めてね</p>
           )}
         </div>
 
         {error && <p className={styles.error}>{error}</p>}
 
         <button type="submit" className={styles.submitBtn} disabled={loading}>
-          {loading ? 'ちゅうび中...' : tab === 'login' ? 'ログインする' : 'いっしょにはじめる'}
+          {loading ? '準備中...' : tab === 'login' ? 'ログインする' : 'いっしょにはじめる'}
         </button>
       </form>
     </div>

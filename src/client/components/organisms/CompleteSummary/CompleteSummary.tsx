@@ -12,6 +12,7 @@ interface Props {
   readonly onRestart: () => void;
   readonly onWordList: () => void;
   readonly onNavigateToWordSets?: () => void;
+  readonly onNavigateToUsers?: () => void;
   readonly onNextSet?: () => void;
   readonly className?: string;
 }
@@ -23,9 +24,12 @@ export function CompleteSummary({
   onRestart,
   onWordList,
   onNavigateToWordSets,
+  onNavigateToUsers,
   onNextSet,
   className = '',
 }: Props): React.ReactElement {
+  const percent = Math.min(100, Math.round((correct / total) * 100));
+
   return (
     <div className={`${styles.container} ${className}`.trim()}>
       <Mascot expression="happy" />
@@ -36,6 +40,21 @@ export function CompleteSummary({
       <Text variant="body" className={styles.message}>
         学習セッションが完了しました。よくがんばりました！🍓
       </Text>
+
+      {/* Goal Progress Gauge */}
+      <div className={styles.goalSection}>
+        <div className={styles.goalLabel}>きょうの目標達成度 🌟</div>
+        <div className={styles.progressBarBg}>
+          <div 
+            className={styles.progressBarFill} 
+            style={{ width: `${percent}%` }}
+          />
+        </div>
+        <div className={styles.goalText}>
+          {correct} / {total} 単語できたよ！ ({percent}%)
+          {percent >= 100 && ' 🌸 目標クリア！おめでとう！ 🌸'}
+        </div>
+      </div>
 
       <div className={styles.stats}>
         <StatItem label="学習単語数" value={total} />
@@ -60,8 +79,12 @@ export function CompleteSummary({
             レベル選択へもどる
           </Button>
         )}
+        {onNavigateToUsers && (
+          <Button variant="soft" size="lg" onClick={onNavigateToUsers} className={styles.button}>
+            👤 つぎはだれの番？ (交代する)
+          </Button>
+        )}
       </div>
     </div>
   );
 }
-

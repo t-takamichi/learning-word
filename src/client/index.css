@@ -32,6 +32,9 @@
   --shadow-soft:  0 8px 24px rgba(255, 111, 165, 0.18);
   --shadow-pop:   0 12px 32px rgba(255, 111, 165, 0.28);
   --shadow-press: 0 2px 8px rgba(255, 111, 165, 0.20);
+
+  /* Focus Indicator */
+  --focus-ring:   0 0 0 4px rgba(255, 111, 165, 0.4);
 }
 
 body {
@@ -49,3 +52,10 @@ body[data-lang="vi"] .ja-content {
 body[data-lang="ja"] .vi-content {
   display: none;
 }
+
+/* Focus outline accessibility style */
+*:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring) !important;
+}
+

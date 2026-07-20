@@ -1,12 +1,21 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 12px;
   width: 100%;
   max-width: 440px;
   margin: 0 auto;
   perspective: 1000px;
   box-sizing: border-box;
+}
+
+.header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  padding: 0 4px;
+  min-height: 40px;
 }
 
 .card {

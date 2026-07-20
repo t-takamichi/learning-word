@@ -13,12 +13,14 @@ export interface SessionState {
   readonly isLoading: boolean;
   readonly error: Error | null;
   readonly isSubmitting: boolean;
+  readonly canUndo: boolean;
 }
 
 export interface SessionActions {
   showAnswer(): void;
   submitReview(result: ReviewInput['result']): void;
   restart(): void;
+  undo(): void;
 }
 
 export function useSession(userId: number | null, wordSetId: number | null): SessionState & SessionActions {
@@ -96,6 +98,14 @@ export function useSession(userId: number | null, wordSetId: number | null): Ses
     void refetch();
   }, [refetch]);
 
+  const undo = useCallback((): void => {
+    if (currentIndex > 0 && !mutation.isPending) {
+      setCurrentIndex((prev) => prev - 1);
+      setIsAnswerVisible(false);
+      setIsComplete(false);
+    }
+  }, [currentIndex, mutation.isPending]);
+
   return {
     words: data ?? [],
     currentIndex,
@@ -104,9 +114,11 @@ export function useSession(userId: number | null, wordSetId: number | null): Ses
     isLoading: isLoading && userId !== null && wordSetId !== null,
     error: error instanceof Error ? error : null,
     isSubmitting: mutation.isPending,
+    canUndo: currentIndex > 0 && !mutation.isPending,
     showAnswer,
     submitReview,
     restart,
+    undo,
   };
 }
 
