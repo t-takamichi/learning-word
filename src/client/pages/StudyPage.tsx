@@ -156,9 +156,14 @@ export function StudyPage(): React.ReactElement | null {
   };
 
   // Stop playing any active TTS speech immediately when the current card index changes.
+  // NOTE: depend only on the stable `speech.cancel` — depending on the whole `speech`
+  // object would re-run this on every render (the object is recreated each render, and
+  // its `isSpeaking` flips to true as soon as speak() starts), instantly cancelling the
+  // example-sentence audio the moment it begins to play.
   useEffect(() => {
     speech.cancel();
-  }, [currentIndex, speech]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentIndex, speech.cancel]);
 
   const handleGood = (): void => {
     // 0. Cancel active speech from previous card or example
